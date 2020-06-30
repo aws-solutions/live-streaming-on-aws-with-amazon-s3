@@ -27,6 +27,10 @@ exports.handler = async (event, context) => {
         switch (config.Resource) {
           case 'MediaLiveInput':
             switch (config.Type) {
+              case 'INPUT_DEVICE':
+                responseData = await mediaLive.createDeviceInput(config);
+                Id = responseData.Id;
+                break;
               case 'RTP_PUSH':
                 responseData = await mediaLive.createRtpInput(config);
                 Id = responseData.Id;

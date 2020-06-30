@@ -69,7 +69,6 @@ echo "--------------------------------------------------------------------------
 echo "Creating NODE custom-resource deployment package"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/custom-resource/
-rm -rf node_modules/
 npm ci --production
 zip -q -r9 $build_dist_dir/custom-resource.zip *
 

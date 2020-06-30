@@ -17,6 +17,15 @@ AWS.setSDK(path.resolve('./node_modules/aws-sdk'));
 
 const lambda = require('./index.js');
 
+const device_input = {
+  StreamName:'test',
+  Type: 'INPUT_DEVICE',
+  InputDevices: [
+    {
+      Id:'hd-123'
+    }
+  ]
+}
 const rtp_input = {
   StreamName:'test',
   Type: 'RTP_PUSH',
@@ -62,12 +71,17 @@ const config = {
 const InputId = '2468';
 
 
-describe('#MEDIALIVE CHANNEL::', () => {
+describe('#MEDIALIVE::', () => {
 
   afterEach(() => {
   AWS.restore('MediaLive');
   });
-  
+
+  it('CREATE DEVICE INPUT SUCCESS', async () => {
+    AWS.mock('MediaLive', 'createInput', Promise.resolve(data));
+    const response = await lambda.createDeviceInput(device_input)
+    expect(response.Id).to.equal('2468');
+  });
   it('CREATE RTP INPUT SUCCESS', async () => {
     AWS.mock('MediaLive', 'createInputSecurityGroup', Promise.resolve(data));
     AWS.mock('MediaLive', 'createInput', Promise.resolve(data));
@@ -93,6 +107,12 @@ describe('#MEDIALIVE CHANNEL::', () => {
     AWS.mock('MediaLive', 'deleteInputSecurityGroup', Promise.resolve());
     const response = await lambda.deleteInput(InputId)
     expect(response).to.equal('success');
+  });
+  it('CREATE DEVICE INPUT ERROR', async () => {
+    AWS.mock('MediaLive', 'createInput', Promise.reject('ERROR'));
+    await lambda.createDeviceInput(device_input).catch(err => {
+      expect(err).to.equal('ERROR');
+    });
   });
   it('CREATE RTP INPUT ERROR', async () => {
     AWS.mock('MediaLive', 'createInputSecurityGroup', Promise.reject('ERROR'));

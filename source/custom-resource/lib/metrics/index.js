@@ -16,6 +16,9 @@ const moment = require('moment');
 const  sendMetrics = async (config) => {
   console.log('Sending Anonymous Metric.....');
   let data;
+  delete config['ServiceToken'];
+  delete config['Resource'];
+  
   try {
     const metrics = {
       Solution: config.SolutionId,

@@ -14,6 +14,9 @@ Live streaming on AWS with MediaStore automatically configures AWS Elemental Med
 ## Architecture Overview
 ![Architecture](architecture.png)
 
+## Input Options
+The solution supports RTP Push, RTMP push, HLS and [AWS Elemental Link](https://aws.amazon.com/medialive/features/link/) input types. For more detialed instructions see the Implementation Guid on the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/). 
+
 ## Encoding Profiles:
 
 * HD-1080p profile: 1920x1080, 1280x720, 960x540, 768x432, 640x360, 512x288

@@ -30,7 +30,7 @@
           "RateControlMode": "CBR",
           "SampleRate": 48000
         }
-      }, 
+      },
       "AudioTypeControl": "FOLLOW_INPUT",
       "LanguageCodeControl": "FOLLOW_INPUT",
       "AudioSelectorName": "default",
@@ -146,7 +146,7 @@
           "ProgramDateTime": "EXCLUDE",
           "ProgramDateTimePeriod": 600,
           "KeepSegments": 21,
-          "SegmentLength": 10,
+          "SegmentLength": 4,
           "TimedMetadataId3Frame": "PRIV",
           "TimedMetadataId3Period": 10,
           "HlsId3SegmentTagging": "DISABLED",
@@ -162,6 +162,7 @@
           "OutputSettings": {
             "HlsOutputSettings": {
               "NameModifier": "_512x288",
+              "SegmentModifier": "_$t$_",
               "HlsSettings": {
                 "StandardHlsSettings": {
                   "M3u8Settings": {
@@ -194,6 +195,7 @@
           "OutputSettings": {
             "HlsOutputSettings": {
               "NameModifier": "_640x360",
+              "SegmentModifier": "_$t$_",
               "HlsSettings": {
                 "StandardHlsSettings": {
                   "M3u8Settings": {
@@ -226,6 +228,7 @@
           "OutputSettings": {
             "HlsOutputSettings": {
               "NameModifier": "_768x432",
+              "SegmentModifier": "_$t$_",
               "HlsSettings": {
                 "StandardHlsSettings": {
                   "M3u8Settings": {
@@ -258,6 +261,7 @@
           "OutputSettings": {
             "HlsOutputSettings": {
               "NameModifier": "_960x540",
+              "SegmentModifier": "_$t$_",
               "HlsSettings": {
                 "StandardHlsSettings": {
                   "M3u8Settings": {
@@ -290,6 +294,7 @@
           "OutputSettings": {
             "HlsOutputSettings": {
               "NameModifier": "_1280x720",
+              "SegmentModifier": "_$t$_",
               "HlsSettings": {
                 "StandardHlsSettings": {
                   "M3u8Settings": {
@@ -322,6 +327,7 @@
           "OutputSettings": {
             "HlsOutputSettings": {
               "NameModifier": "_1920x1080",
+              "SegmentModifier": "_$t$_",
               "HlsSettings": {
                 "StandardHlsSettings": {
                   "M3u8Settings": {
@@ -374,7 +380,7 @@
           "GopBReference": "ENABLED",
           "GopClosedCadence": 1,
           "GopNumBFrames": 0,
-          "GopSize": 3,
+          "GopSize": 2,
           "GopSizeUnits": "SECONDS",
           "SubgopLength": "DYNAMIC",
           "ScanType": "PROGRESSIVE",
@@ -417,7 +423,7 @@
           "GopBReference": "ENABLED",
           "GopClosedCadence": 1,
           "GopNumBFrames": 0,
-          "GopSize": 3,
+          "GopSize": 2,
           "GopSizeUnits": "SECONDS",
           "SubgopLength": "DYNAMIC",
           "ScanType": "PROGRESSIVE",
@@ -460,7 +466,7 @@
           "GopBReference": "ENABLED",
           "GopClosedCadence": 1,
           "GopNumBFrames": 0,
-          "GopSize": 3,
+          "GopSize": 2,
           "GopSizeUnits": "SECONDS",
           "SubgopLength": "DYNAMIC",
           "ScanType": "PROGRESSIVE",
@@ -503,7 +509,7 @@
           "GopBReference": "ENABLED",
           "GopClosedCadence": 1,
           "GopNumBFrames": 0,
-          "GopSize": 3,
+          "GopSize": 2,
           "GopSizeUnits": "SECONDS",
           "SubgopLength": "DYNAMIC",
           "ScanType": "PROGRESSIVE",
@@ -546,7 +552,7 @@
           "GopBReference": "ENABLED",
           "GopClosedCadence": 1,
           "GopNumBFrames": 0,
-          "GopSize": 3,
+          "GopSize": 2,
           "GopSizeUnits": "SECONDS",
           "SubgopLength": "DYNAMIC",
           "ScanType": "PROGRESSIVE",
@@ -589,7 +595,7 @@
           "GopBReference": "ENABLED",
           "GopClosedCadence": 1,
           "GopNumBFrames": 0,
-          "GopSize": 3,
+          "GopSize": 2,
           "GopSizeUnits": "SECONDS",
           "SubgopLength": "DYNAMIC",
           "ScanType": "PROGRESSIVE",

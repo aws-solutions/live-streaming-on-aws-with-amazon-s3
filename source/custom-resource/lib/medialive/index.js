@@ -13,7 +13,42 @@
 const AWS = require('aws-sdk');
 
 /**
- * Descritption: creates a medialive RTP push input and associated security group
+ * Description: creates a medialive device input (Elemental Link)
+ * @param {object} config  the configuration settings for input:
+ * @param {string} config.StreamName   the name of the input
+ * @param {string} config.Type  should be INPUT_DEVICE
+ * @param {string} config.InputDeviceId  should be the device id "hd-11111111111"
+*/
+const createDeviceInput = async (config) => {
+    console.log('Creating Link Input.....');
+    const medialive = new AWS.MediaLive({
+        region: process.env.AWS_REGION
+    });
+    let responseData
+    try {
+        let params = {
+            Name: config.StreamName,
+            Type: config.Type,
+            InputDevices: [
+              {
+                Id:config.InputDeviceId
+              }
+            ]
+        };
+        data = await medialive.createInput(params).promise();
+        responseData = {
+            Id: data.Input.Id,
+            EndPoint: 'Push InputType only'
+        };
+    } catch (err) {
+        throw (err);
+    }
+    return responseData;
+};
+
+
+/**
+ * Description: creates a medialive RTP push input and associated security group
  * @param {object} config  the configuration settings for input:
  * @param {string} config.StreamName   the name of the input
  * @param {string} config.Type  should be RTP_PUSH
@@ -26,7 +61,7 @@ const createRtpInput = async (config) => {
     });
     let responseData,
         params,
-        data; 
+        data;
     try {
         params = {
             WhitelistRules: [{
@@ -52,7 +87,7 @@ const createRtpInput = async (config) => {
 
 
 /**
- * Descritption: creates a medialive RTP push input and associated security group
+ * Description: creates a medialive RTP push input and associated security group
  * @param {object} config  the configuration settings for input:
  * @param {string} config.StreamName   the name of the input
  * @param {string} config.Type  should be RTP_PUSH
@@ -65,7 +100,7 @@ const createRtmpInput = async (config) => {
     });
     let responseData,
         params,
-        data; 
+        data;
     try {
         params = {
             WhitelistRules: [{
@@ -95,7 +130,7 @@ const createRtmpInput = async (config) => {
 
 
 /**
- * Descritption: creates a medialive RTP push input and associated security group
+ * Description: creates a medialive RTP push input and associated security group
  * @param {object} config  the configuration settings for input:
  * @param {string} config.StreamName   the name of the input
  * @param {string} config.Type  should be RTP_PUSH
@@ -112,7 +147,7 @@ const createUrlInput = async (config) => {
     });
     let responseData,
         params,
-        data; 
+        data;
     try {
         params = {
             Name: config.StreamName,
@@ -147,7 +182,7 @@ const createUrlInput = async (config) => {
 
 
 /**
- * Descritption: delete a medialive input and associated security group
+ * Description: delete a medialive input and associated security group
  * @param {string} InputId  the InputId which in CloudFormation is the physical resource ID.
  */
 const deleteInput = async (InputId) => {
@@ -157,7 +192,7 @@ const deleteInput = async (InputId) => {
         region: process.env.AWS_REGION
     });
     let params,
-        data; 
+        data;
     try {
         params = {
             InputId: InputId
@@ -193,9 +228,9 @@ const deleteInput = async (InputId) => {
 
 
 /**
- * Descritption: creates a medialive channel and then call the waitFor function to confirm the channel creation is successful.
+ * Description: creates a medialive channel and then call the waitFor function to confirm the channel creation is successful.
  * @param {object} config  the configuration settings for input:
- * @param {string} config.EncodingProfile  should one of HD-1080p, HD-720p, SD-540p. 
+ * @param {string} config.EncodingProfile  should one of HD-1080p, HD-720p, SD-540p.
  * @param {string} config.Codec encoding codec option, default is AVC.
  * @param {string} config.Role  the MediaLive IAM Role associated with the channel.
  * @param {string} config.InputId  the ID of the medialive input to attach to the channel.
@@ -211,7 +246,7 @@ const createChannel = async (config) => {
     const encode540p = require('./encoding-profiles/sd-540p');
     let responseData,
         params,
-        data; 
+        data;
     try {
         params = {
             ChannelClass:'SINGLE_PIPELINE',
@@ -281,9 +316,9 @@ const createChannel = async (config) => {
 
 
 /**
- * Descritption: start the medialive channel
+ * Description: start the medialive channel
  * @param {object} config  the configuration settings for input:
- * @param {string} ChannelId  the medialive channel id 
+ * @param {string} ChannelId  the medialive channel id
  */
 const startChannel = async (config) => {
     console.log('Starting Channel.....');
@@ -303,7 +338,7 @@ const startChannel = async (config) => {
 
 
 /**
- * Descritption: delete a medialive channel.
+ * Description: delete a medialive channel.
  * @param {string} ChannelId  the ChannelId which in CloudFormation is the physical resource ID.
  */
 const deleteChannel = async (ChannelId) => {
@@ -312,7 +347,7 @@ const deleteChannel = async (ChannelId) => {
         region: process.env.AWS_REGION
     });
     let params,
-        data; 
+        data;
     try {
         params = {
             ChannelId: ChannelId
@@ -329,6 +364,7 @@ const deleteChannel = async (ChannelId) => {
 
 
 module.exports = {
+    createDeviceInput: createDeviceInput,
     createRtpInput: createRtpInput,
     createRtmpInput: createRtmpInput,
     createUrlInput: createUrlInput,

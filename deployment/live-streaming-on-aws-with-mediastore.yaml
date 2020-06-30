@@ -10,36 +10,42 @@
 # on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
-Description: 'SOLUTION_ID - SOLUTION_NAME - CODE_VERSION'
+Description: "(SOLUTION_ID) - SOLUTION_NAME - CODE_VERSION"
 
 Parameters:
 
   InputType:
-    Description: Specify the input type for MediaLive (Default parameters are for the Demo video)
+    Description: Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/appendix-a.html.
     Type: String
     Default: URL_PULL
     AllowedValues:
       - RTP_PUSH
       - RTMP_PUSH
       - URL_PULL
+      - INPUT_DEVICE
+
+  InputDeviceId:
+    Description: Specify the ID for your Elemental Link Input device (please note a Link device can only be attached to one input at a time)
+    Type: String
+    Default: ""
 
   InputCIDR:
-    Description: Specify the MediaLive input Security Group CIDR Block, this is used to restrict access to the MediaLive Input
+    Description: For RTP and RTMP PUSH input types ONLY, specify the CIDR Block for the MediaLive SecurityGroup. Input security group restricts access to the input and prevents unauthorized third parties from pushing content into a channel that is associated with that input.
     Type: String
     Default: ""
 
   PullUrl:
-    Description: Specify the input URL for MediaLive to pull content from.
+    Description: For URL PULL input type ONLY, specify the primary source URL, this should be a HTTP or HTTPS link to the stream manifest file.
     Type: String
     Default: "https://d15an60oaeed9r.cloudfront.net/live_stream_v2/sports_reel_with_markers.m3u8"
 
   PullUser:
-    Description: If your PULL URL requitres authentication enter the username 
+    Description:  For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the username
     Type: String
     Default: ""
 
   PullPass:
-    Description: If your PULL URL requitres authentication enter the password
+    Description: For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the password
     Type: String
     Default: ""
     NoEcho: true
@@ -54,7 +60,7 @@ Parameters:
       - SD-540p
 
   ChannelStart:
-    Description: Start the Live Channel as part of the deployment
+    Description: If your source is ready to stream select true, this wil start the MediaLive Channel as part of the deployment. If you select false you will need to manually start the MediaLive Channel when your source is ready.
     Type: String
     Default: Yes
     AllowedValues:
@@ -66,13 +72,26 @@ Metadata:
         ParameterGroups:
             -
               Label:
-                default: SOURCE CONFIGURATION
+                default: LIVE STREAM SOURCE
               Parameters:
                 - InputType
+            -
+              Label:
+                default: URL_PULL CONFIGURATION
+              Parameters:
                 - PullUrl
                 - PullUser
                 - PullPass
+            -
+              Label:
+                default: RTP_PUSH / RTMP_PUSH CONFIGURATION
+              Parameters:
                 - InputCIDR
+            -
+              Label:
+                default: INPUT_DEVICE CONFIGURATION
+              Parameters:
+                - InputDeviceId
             -
               Label:
                 default: ENCODING OPTIONS
@@ -83,16 +102,18 @@ Metadata:
         ParameterLabels:
           InputType:
             default: Source Input Type
+          InputDeviceId:
+            default: Elemental Link Input Device ID
           EncodingProfile:
             default: Encoding Profile
           InputCIDR:
-            default: Input Security Group CIDR Block (REQUIRED FOR RTP_PUSH OR RTMP_PUSH INPUT TYPES)
+            default: Input Security Group CIDR Block (REQUIRED)
           PullUrl:
-            default: Source URL (REQUIRED FOR URL_PULL INPUT TYPE)
+            default: Source URL (REQUIRED)
           PullUser:
-            default: Source Username (OPTIONAL AND ONLY URL FOR_PULL INPUT TYPE)
+            default: Source Username (OPTIONAL)
           PullPass:
-            default: Source Password (OPTIONAL AND ONLY FOR URL_PULL INPUT TYPE)
+            default: Source Password (OPTIONAL)
           ChannelStart:
             default: Start MediaLive Channel
 
@@ -167,7 +188,7 @@ Resources:
 
                 - !Join ["", ["arn:aws:logs:", Ref: "AWS::Region", ":", Ref: "AWS::AccountId", ":log-group:/aws/lambda/*"]]
       Tags:
-        -  
+        -
           Key: Solution
           Value: SOLUTION_ID
 
@@ -222,7 +243,7 @@ Resources:
                 Resource:
                   -  !GetAtt MediaLiveRole.Arn
       Tags:
-        -  
+        -
           Key: Solution
           Value: SOLUTION_ID
 
@@ -239,7 +260,7 @@ Resources:
       Runtime: nodejs12.x
       Timeout: 180
       Tags:
-        -  
+        -
           Key: Solution
           Value: SOLUTION_ID
 
@@ -250,6 +271,7 @@ Resources:
       Resource: MediaLiveInput
       StreamName: !Sub ${AWS::StackName}
       Type: !Ref InputType
+      InputDeviceId: !Ref InputDeviceId
       Cidr: !Ref InputCIDR
       PullUrl: !Ref PullUrl
       PullUser: !Ref PullUser
@@ -283,9 +305,9 @@ Resources:
   MediaStore:
     DeletionPolicy: Retain
     Type: AWS::MediaStore::Container
-    Properties: 
+    Properties:
       AccessLoggingEnabled: true
-      CorsPolicy: 
+      CorsPolicy:
         - AllowedHeaders:
           - "*"
           AllowedMethods:
@@ -303,8 +325,8 @@ Resources:
               "Sid" : "MediaStoreCloudFrontAcccess",
               "Effect" : "Allow",
               "Principal" : "*",
-              "Action" : [ 
-                  "mediastore:GetObject", 
+              "Action" : [
+                  "mediastore:GetObject",
                   "mediastore:DescribeObject"
               ],
               "Resource" : "arn:aws:mediastore:${AWS::Region}:${AWS::AccountId}:container/${AWS::StackName}/*",
@@ -319,7 +341,7 @@ Resources:
             }]
           }
       LifecyclePolicy:
-        !Sub | 
+        !Sub |
           {
             "rules": [
               {
@@ -346,152 +368,162 @@ Resources:
     Type: AWS::CloudWatch::Dashboard
     Properties:
       DashboardName: !Sub ${AWS::StackName}-MediaStore-Live-Streaming
-      DashboardBody: 
-        !Sub | 
-          {
-            "widgets": [
-              {
-                "type": "log",
-                "x": 0,
-                "y": 0,
-                "width": 12,
-                "height": 6,
-                "properties": {
-                  "title": "Ingress Transaction Per Minute",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | fields @message\n| filter (Path like \"/stream/index\") and (Operation=\"PutObject\")\n| stats count(*) as TPM by bin(1m)",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "timeSeries"
-                }
-              },
-              {
-                "type": "log",
-                "x": 0,
-                "y": 6,
-                "width": 12,
-                "height": 6,
-                "properties": {
-                  "title":"Ingress PutObject Latencies (Successful Requests)",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter HTTPStatus like /2\\d{2}/ and Operation=\"PutObject\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "timeSeries"
-                }
-              },
-              {
-                "type": "log",
-                "x": 0,
-                "y": 12,
-                "width": 12,
-                "height": 6,
-                "properties": {
-                  "title":"Ingress 2xx Status Count by Operation",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\") | filter HTTPStatus like /2\\d{2}/ \n| filter Operation = \"PutObject\" or Operation=\"DeleteObject\"\n| stats count() as `2xx Count` by Operation | sort `2xx Count` desc",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "table"
-                }
-              },
-              {
-                "type": "log",
-                "x": 0,
-                "y": 18,
-                "width": 6,
-                "height": 6,
-                "properties": {
-                  "title":"Ingress 4xx Status Count",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /4\\d{2}/ \n| filter Operation = \"PutObject\"\n| stats count() as `4xx Count` by Operation",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "table"
-                }
-              },
-              {
-                "type": "log",
-                "x": 6,
-                "y": 18,
-                "width": 6,
-                "height": 6,
-                "properties": {
-                  "title":"Ingress 5xx Status Count",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /5\\d{2}/ \n| filter Operation = \"PutObject\"\n| stats count() as `5xx Count` by Operation",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "table"
-                }
-              },
-              {
-                "type": "log",
-                "x": 12,
-                "y": 0,
-                "width": 12,
-                "height": 6,
-                "properties": {
-                  "title": "Egress Transaction Per Minute",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | fields @message\n| filter Path like \"/stream/index\"\n| filter Operation=\"GetObject\"\n| stats count(*) as TPM by bin(1m)\n",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "timeSeries"
-                }
-              },
-              {
-                "type": "log",
-                "x": 12,
-                "y": 6,
-                "width": 12,
-                "height": 6,
-                "properties": {
-                  "title":"Egress GetObject Latencies (Successful Requests)",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter HTTPStatus like /2\\d{2}/ and Operation=\"GetObject\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "timeSeries"
-                }
-              },
-              {
-                "type": "log",
-                "x": 12,
-                "y": 12,
-                "width": 12,
-                "height": 6,
-                "properties": {
-                  "title":"Egress 2xx Status Count by Operation",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\") | filter HTTPStatus like /2\\d{2}/ \n| filter Operation = \"GetObject\" \n| stats count() as `2xx Count` by Operation | sort `2xx Count` desc",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "table"
-                }
-              },
-              {
-                "type": "log",
-                "x": 12,
-                "y": 18,
-                "width": 6,
-                "height": 6,
-                "properties": {
-                  "title":"Egress 4xx Status Count",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /4\\d{2}/ \n| filter Operation = \"GetObject\"\n| stats count() as `4xx Count` by Operation",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "table"
-                }
-              },
-              {
-                "type": "log",
-                "x": 18,
-                "y": 18,
-                "width": 6,
-                "height": 6,
-                "properties": {
-                  "title":"Egress 5xx Status Count",
-                  "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /5\\d{2}/ \n| filter Operation = \"GetObject\"\n| stats count() as `5xx Count` by Operation",
-                  "region": "${AWS::Region}",
-                  "stacked": false,
-                  "view": "table"
-                }
-              }
-            ]
-          }
+      DashboardBody:
+        !Sub |
+            {
+              "widgets": [
+                  {
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 24,
+                      "height": 2,
+                      "properties": {
+                          "markdown": "\nThis dashboard monitors the CloudWatch Logs for the MediaStore container and shows data points for both ingress and egress operations while the live stream is running. This dashboard monitors the CloudWatch Logs for the MediaStore container and shows data points for both ingress and egress operations while the live stream is running.  An IAM Role is required to allow MediaStore to write to CloudWatch Logs. If you do not see any data points on this dashboard, please follow [these instructions to create the Role](https://docs.aws.amazon.com/mediastore/latest/ug/monitoring-cloudwatch-permissions.html).\n"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 2,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "title": "Ingress Transaction Per Minute",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | fields @message\n| filter (Path like \"/stream/index\") and (Operation=\"PutObject\")\n| stats count(*) as TPM by bin(1m)",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "timeSeries"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 8,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "title": "Ingress PutObject Latencies (Successful Requests)",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter HTTPStatus like /2\\d{2}/ and Operation=\"PutObject\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "timeSeries"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 14,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "title": "Ingress 2xx Status Count by Operation",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\") | filter HTTPStatus like /2\\d{2}/ \n| filter Operation = \"PutObject\" or Operation=\"DeleteObject\"\n| stats count() as `2xx Count` by Operation | sort `2xx Count` desc",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 20,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "title": "Ingress 4xx Status Count",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /4\\d{2}/ \n| filter Operation = \"PutObject\"\n| stats count() as `4xx Count` by Operation",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 6,
+                      "y": 20,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "title": "Ingress 5xx Status Count",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /5\\d{2}/ \n| filter Operation = \"PutObject\"\n| stats count() as `5xx Count` by Operation",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 12,
+                      "y": 2,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "title": "Egress Transaction Per Minute",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | fields @message\n| filter Path like \"/stream/index\"\n| filter Operation=\"GetObject\"\n| stats count(*) as TPM by bin(1m)\n",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "timeSeries"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 12,
+                      "y": 8,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "title": "Egress GetObject Latencies (Successful Requests)",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter HTTPStatus like /2\\d{2}/ and Operation=\"GetObject\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "timeSeries"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 12,
+                      "y": 14,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "title": "Egress 2xx Status Count by Operation",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\") | filter HTTPStatus like /2\\d{2}/ \n| filter Operation = \"GetObject\" \n| stats count() as `2xx Count` by Operation | sort `2xx Count` desc",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 12,
+                      "y": 20,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "title": "Egress 4xx Status Count",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /4\\d{2}/ \n| filter Operation = \"GetObject\"\n| stats count() as `4xx Count` by Operation",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 18,
+                      "y": 20,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "title": "Egress 5xx Status Count",
+                          "query": "SOURCE '/aws/mediastore/${AWS::StackName}' | filter (Path like \"/stream/index\")\n| filter HTTPStatus like /5\\d{2}/ \n| filter Operation = \"GetObject\"\n| stats count() as `5xx Count` by Operation",
+                          "region":  "${AWS::Region}",
+                          "stacked": false,
+                          "view": "table"
+                      }
+                  }
+              ]
+            }
 
   CloudFront:
     Type: AWS::CloudFront::Distribution
@@ -526,16 +558,20 @@ Resources:
           ForwardedValues:
             QueryString: true
             Cookies:
-              Forward: all
+              Forward: none
             Headers:
               - Access-Control-Allow-Origin
               - Access-Control-Request-Method
               - Access-Control-Request-Header
+              - Origin
           ViewerProtocolPolicy: allow-all
+        CustomErrorResponses:
+          - ErrorCode: '404'
+            ErrorCachingMinTTL: '2'
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
       Tags:
-        -  
+        -
           Key: Solution
           Value: SOLUTION_ID
     Metadata:
@@ -565,7 +601,7 @@ Resources:
             reason: "Used to store access logs for other buckets"
           - id: W51
             reason: "Bucket is private and does not need a bucket policy"
-      
+
   Uuid:
     Condition: Metrics
     Type: "Custom::UUID"
@@ -585,11 +621,10 @@ Resources:
       InputType: !Ref InputType
       EncodingProfile: !Ref EncodingProfile
       ChannelStart: !Ref ChannelStart
-      PullUrl: !Ref PullUrl
       InputCIDR: !Ref InputCIDR
 
 Outputs:
-  CloudFrontEndpoint:
+  LiveStreamUrl:
     Description: CloudFront Live Stream URL
     Value: !Sub https://${CloudFront.DomainName}/stream/index.m3u8
 
@@ -606,5 +641,5 @@ Outputs:
     Value: !Sub https://${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards:name=${AWS::StackName}-MediaStore-Live-Streaming
 
   MediaLivePushEndpoint:
-    Description: The MediaLive Input ingress endpoint for push input types 
+    Description: The MediaLive Input ingress endpoint for push input types
     Value: !GetAtt MediaLiveInput.EndPoint
