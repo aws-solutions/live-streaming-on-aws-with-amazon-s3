@@ -10,7 +10,7 @@
     "test": "mocha lib/**/*.spec.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.719.0",
+    "aws-sdk": "^2.730.0",
     "axios": "*",
     "moment": "^2.27.0",
     "uuid": "^3.3.0"
@@ -19,7 +19,7 @@
     "aws-sdk-mock": "*",
     "axios-mock-adapter": "^1.18.2",
     "chai": "*",
-    "mocha": "*"
+    "mocha": "^8.1.1"
   },
   "repository": {
     "type": "git",

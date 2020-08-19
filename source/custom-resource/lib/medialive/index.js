@@ -160,14 +160,18 @@ const createUrlInput = async (config) => {
         if (config.PullUser && config.PullUser !== '') {
             params.Sources[0].Username = config.PullUser;
             params.Sources[0].PasswordParam = config.PullUser;
-            let ssm_params = {
-                Name: config.PullUser,
-                Description: 'Live Stream solution input credentials',
-                Type: 'String',
-                Value: config.PullPass,
-                Overwrite: true
-            };
-            await ssm.putParameter(ssm_params).promise();
+            try {
+                let ssmParams = {
+                    Name: config.PullUser,
+                    Description: 'Live Stream solution input credentials',
+                    Type: 'String',
+                    Value: config.PullPass,
+                    Overwrite: true
+                };
+                await ssm.putParameter(ssmParams).promise();
+            } catch (err) {
+                throw err;
+            }
         }
         data = await medialive.createInput(params).promise();
         responseData = {
