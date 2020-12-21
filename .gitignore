@@ -1,5 +1,7 @@
 node_modules/
-open-source/
-.DS_Store
+coverage
+build/
+dev/
 global-s3-assets/
 regional-s3-assets/
+open-source/
