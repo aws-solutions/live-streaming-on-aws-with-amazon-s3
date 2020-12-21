@@ -1,0 +1,1127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LiveStreaming Stack Test 1`] = `
+Object {
+  "Description": "SO0109 Live Streaming on AWS with MediaStore Solution %%VERSION%%",
+  "Mappings": Object {
+    "AnonymousData": Object {
+      "SendAnonymousData": Object {
+        "Data": "Yes",
+      },
+    },
+  },
+  "Metadata": Object {
+    "AWS::CloudFormation::Interface": Object {
+      "ParameterGroups": Array [
+        Object {
+          "Label": Object {
+            "default": "LIVE STREAM SOURCE",
+          },
+          "Parameters": Array [
+            "InputType",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "URL_PULL CONFIGURATION",
+          },
+          "Parameters": Array [
+            "PullUrl",
+            "PullUser",
+            "PullPass",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "RTP_PUSH / RTMP_PUSH CONFIGURATION",
+          },
+          "Parameters": Array [
+            "InputCIDR",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "INPUT_DEVICE CONFIGURATION",
+          },
+          "Parameters": Array [
+            "InputDeviceId",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "ENCODING OPTIONS",
+          },
+          "Parameters": Array [
+            "EncodingProfile",
+            "ChannelStart",
+          ],
+        },
+      ],
+      "ParameterLabels": Object {
+        "ChannelStart": Object {
+          "default": "Start MediaLive Channel",
+        },
+        "EncodingProfile": Object {
+          "default": "Encoding Profile",
+        },
+        "InputCIDR": Object {
+          "default": "Input Security Group CIDR Block (REQUIRED)",
+        },
+        "InputDeviceId": Object {
+          "default": "Elemental Link Input Device ID",
+        },
+        "InputType": Object {
+          "default": "Source Input Type",
+        },
+        "PullUrl": Object {
+          "default": "Source URL (REQUIRED)",
+        },
+        "PullUser": Object {
+          "default": "Source Username (OPTIONAL)",
+        },
+        "pullPass": Object {
+          "default": "Source Password (REQUIRED)",
+        },
+      },
+    },
+  },
+  "Outputs": Object {
+    "CloudWatchDashboard": Object {
+      "Description": "CloudWatch Dashboard for MediaStore Ingress and Egress",
+      "Export": Object {
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-CloudWatchDashboard",
+            ],
+          ],
+        },
+      },
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".console.aws.amazon.com/cloudwatch/home?region=",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            "#dashboards:name=",
+            Object {
+              "Ref": "AWS::StackName",
+            },
+            "-MediaStore-Live-Streaming",
+          ],
+        ],
+      },
+    },
+    "LiveStreamUrl": Object {
+      "Description": "CloudFront Live Stream URL",
+      "Export": Object {
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-LiveStreamUrl",
+            ],
+          ],
+        },
+      },
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Fn::GetAtt": Array [
+                "CloudFrontToMediaStoreCloudFrontDistribution36D55136",
+                "DomainName",
+              ],
+            },
+            "/stream/index.m3u8",
+          ],
+        ],
+      },
+    },
+    "MediaLiveConsole": Object {
+      "Description": "MediaLive Channel",
+      "Export": Object {
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-MediaLiveConsole",
+            ],
+          ],
+        },
+      },
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".console.aws.amazon.com/medialive/home?region=",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            "#!/channels",
+          ],
+        ],
+      },
+    },
+    "MediaLivePushEndpoint": Object {
+      "Description": "The MediaLive Input ingress endpoint for push input types",
+      "Export": Object {
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-MediaLiveEndpoint",
+            ],
+          ],
+        },
+      },
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "MediaLiveInput",
+          "EndPoint",
+        ],
+      },
+    },
+    "MediaStoreConsole": Object {
+      "Description": "MediaStore Container",
+      "Export": Object {
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-MediaStoreConsole",
+            ],
+          ],
+        },
+      },
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".console.aws.amazon.com/mediastore/home/containers/",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73ArtifactHashC8CA8A8F": Object {
+      "Description": "Artifact hash for asset \\"3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73\\"",
+      "Type": "String",
+    },
+    "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3Bucket013B9B3B": Object {
+      "Description": "S3 bucket for asset \\"3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73\\"",
+      "Type": "String",
+    },
+    "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3VersionKey432012AC": Object {
+      "Description": "S3 key for asset version \\"3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73\\"",
+      "Type": "String",
+    },
+    "ChannelStart": Object {
+      "AllowedValues": Array [
+        "Yes",
+        "No",
+      ],
+      "Default": "Yes",
+      "Description": "If your source is ready to stream select true, this wil start the MediaLive Channel as part of the deployment. If you select false you will need to manually start the MediaLive Channel when your source is ready.",
+      "Type": "String",
+    },
+    "EncodingProfile": Object {
+      "AllowedValues": Array [
+        "HD-1080p",
+        "HD-720p",
+        "SD-540p",
+      ],
+      "Default": "HD-720p",
+      "Description": "Select an encoding profile. HD 1080p [1920x1080, 1280x720, 960x540, 768x432, 640x360, 512x288] HD 720p [1280x720, 960x540, 768x432, 640x360, 512x288] SD 540p [960x540, 768x432, 640x360, 512x288]  See the implementation guide for details https://docs.aws.amazon.com/solutions/latest/live-streaming/considerations.html",
+      "Type": "String",
+    },
+    "InputCIDR": Object {
+      "Default": "",
+      "Description": "For RTP and RTMP PUSH input types ONLY, specify the CIDR Block for the MediaLive SecurityGroup. Input security group restricts access to the input and prevents unauthorized third parties from pushing content into a channel that is associated with that input.",
+      "Type": "String",
+    },
+    "InputDeviceId": Object {
+      "Default": "",
+      "Description": "Specify the ID for your Elemental Link Input device (please note a Link device can only be attached to one input at a time)",
+      "Type": "String",
+    },
+    "InputType": Object {
+      "AllowedValues": Array [
+        "RTP_PUSH",
+        "RTMP_PUSH",
+        "URL_PULL",
+        "INPUT_DEVICE",
+      ],
+      "Default": "URL_PULL",
+      "Description": "Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/appendix-a.html.",
+      "Type": "String",
+    },
+    "PullPass": Object {
+      "Default": "",
+      "Description": "For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the password",
+      "Type": "String",
+    },
+    "PullUrl": Object {
+      "Default": "https://d15an60oaeed9r.cloudfront.net/live_stream_v2/sports_reel_with_markers.m3u8",
+      "Description": "For URL PULL input type ONLY, specify the primary source URL, this should be a HTTP or HTTPS link to the stream manifest file.",
+      "Type": "String",
+    },
+    "PullUser": Object {
+      "Default": "",
+      "Description": "For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the username",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "AnonymousMetric": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ChannelStart": Object {
+          "Ref": "ChannelStart",
+        },
+        "Cidr": Object {
+          "Ref": "InputCIDR",
+        },
+        "EncodingProfile": Object {
+          "Ref": "EncodingProfile",
+        },
+        "SendAnonymousMetric": Object {
+          "Fn::FindInMap": Array [
+            "AnonymousData",
+            "SendAnonymousData",
+            "Data",
+          ],
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomResource8CDCD7A7",
+            "Arn",
+          ],
+        },
+        "SolutionId": "SO0109",
+        "Type": Object {
+          "Ref": "InputType",
+        },
+        "UUID": Object {
+          "Fn::GetAtt": Array [
+            "UUID",
+            "UUID",
+          ],
+        },
+        "Version": "%%VERSION%%",
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CloudFrontToMediaStoreCloudFrontDistribution36D55136": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W70",
+              "reason": "Since the distribution uses the CloudFront domain name, CloudFront automatically sets the security policy to TLSv1 regardless of the value of MinimumProtocolVersion",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "DistributionConfig": Object {
+          "DefaultCacheBehavior": Object {
+            "AllowedMethods": Array [
+              "GET",
+              "HEAD",
+              "OPTIONS",
+            ],
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "CachedMethods": Array [
+              "GET",
+              "HEAD",
+              "OPTIONS",
+            ],
+            "Compress": true,
+            "OriginRequestPolicyId": Object {
+              "Ref": "CloudFrontToMediaStoreCloudfrontOriginRequestPolicyE5B13E44",
+            },
+            "TargetOriginId": "LiveStreamingCloudFrontToMediaStoreCloudFrontDistributionOrigin1A3A57054",
+            "ViewerProtocolPolicy": "redirect-to-https",
+          },
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "IPV6Enabled": true,
+          "Logging": Object {
+            "Bucket": Object {
+              "Fn::GetAtt": Array [
+                "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                "RegionalDomainName",
+              ],
+            },
+          },
+          "Origins": Array [
+            Object {
+              "CustomOriginConfig": Object {
+                "OriginProtocolPolicy": "https-only",
+              },
+              "DomainName": Object {
+                "Fn::Select": Array [
+                  0,
+                  Object {
+                    "Fn::Split": Array [
+                      "/",
+                      Object {
+                        "Fn::Select": Array [
+                          1,
+                          Object {
+                            "Fn::Split": Array [
+                              "://",
+                              Object {
+                                "Fn::GetAtt": Array [
+                                  "CloudFrontToMediaStoreMediaStoreContainer2EAAC53A",
+                                  "Endpoint",
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              "Id": "LiveStreamingCloudFrontToMediaStoreCloudFrontDistributionOrigin1A3A57054",
+              "OriginCustomHeaders": Array [
+                Object {
+                  "HeaderName": "User-Agent",
+                  "HeaderValue": Object {
+                    "Ref": "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::CloudFront::Distribution",
+    },
+    "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "access-identity-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "-",
+                Object {
+                  "Ref": "AWS::StackName",
+                },
+              ],
+            ],
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B": Object {
+      "DeletionPolicy": "Retain",
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W35",
+              "reason": "This S3 bucket is used as the access logging bucket for CloudFront Distribution",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CloudFrontToMediaStoreCloudfrontLoggingBucketPolicy9AB02183": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+              "Sid": "HttpsOnly",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "CloudFrontToMediaStoreCloudfrontOriginRequestPolicyE5B13E44": Object {
+      "Properties": Object {
+        "OriginRequestPolicyConfig": Object {
+          "Comment": "Policy for Constructs CloudFrontDistributionForMediaStore",
+          "CookiesConfig": Object {
+            "CookieBehavior": "none",
+          },
+          "HeadersConfig": Object {
+            "HeaderBehavior": "whitelist",
+            "Headers": Array [
+              "Access-Control-Allow-Origin",
+              "Access-Control-Request-Method",
+              "Access-Control-Request-Header",
+              "Origin",
+            ],
+          },
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Ref": "AWS::StackName",
+                },
+                "-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "-CloudFrontDistributionForMediaStore",
+              ],
+            ],
+          },
+          "QueryStringsConfig": Object {
+            "QueryStringBehavior": "all",
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::OriginRequestPolicy",
+    },
+    "CloudFrontToMediaStoreMediaStoreContainer2EAAC53A": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "AccessLoggingEnabled": true,
+        "ContainerName": Object {
+          "Ref": "AWS::StackName",
+        },
+        "CorsPolicy": Array [
+          Object {
+            "AllowedHeaders": Array [
+              "*",
+            ],
+            "AllowedMethods": Array [
+              "GET",
+            ],
+            "AllowedOrigins": Array [
+              "*",
+            ],
+            "ExposeHeaders": Array [
+              "*",
+            ],
+            "MaxAgeSeconds": 3000,
+          },
+        ],
+        "LifecyclePolicy": "{\\"rules\\":[{\\"definition\\":{\\"path\\":[{\\"wildcard\\":\\"stream/*.ts\\"}],\\"seconds_since_create\\":[{\\"numeric\\":[\\">\\",300]}]},\\"action\\":\\"EXPIRE\\"}]}",
+        "MetricPolicy": Object {
+          "ContainerLevelMetrics": "ENABLED",
+        },
+        "Policy": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"Version\\":\\"2012-10-17\\",\\"Statement\\":[{\\"Sid\\":\\"MediaStoreDefaultPolicy\\",\\"Effect\\":\\"Allow\\",\\"Principal\\":\\"*\\",\\"Action\\":[\\"mediastore:GetObject\\",\\"mediastore:DescribeObject\\"],\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":mediastore:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":container/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "/*\\",\\"Condition\\":{\\"Bool\\":{\\"aws:UserAgent\\":\\"",
+              Object {
+                "Ref": "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3",
+              },
+              "\\",\\"aws:SecureTransport\\":\\"true\\"}}}]}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::MediaStore::Container",
+    },
+    "CustomResource8CDCD7A7": Object {
+      "DependsOn": Array [
+        "CustomResourceServiceRoleDefaultPolicy62213138",
+        "CustomResourceServiceRoleE774390D",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Invalid warning: function has access to cloudwatch",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3Bucket013B9B3B",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3VersionKey432012AC",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3VersionKey432012AC",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint",
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomResourceServiceRoleE774390D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 30,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomResourceServiceRoleDefaultPolicy62213138": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "medialive:DescribeInputSecurityGroup",
+                "medialive:createInputSecurityGroup",
+                "medialive:describeInput",
+                "medialive:createInput",
+                "medialive:deleteInput",
+                "medialive:stopChannel",
+                "medialive:createChannel",
+                "medialive:deleteChannel",
+                "medialive:deleteInputSecurityGroup",
+                "medialive:describeChannel",
+                "medialive:startChannel",
+                "medialive:tagResource",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":medialive:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ssm:PutParameter",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ssm:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "iam:PassRole",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "MediaLiveRole1149D189",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomResourceServiceRoleDefaultPolicy62213138",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomResourceServiceRoleE774390D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CustomResourceServiceRoleE774390D": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "Dashboard9E4231ED": Object {
+      "Properties": Object {
+        "DashboardBody": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"widgets\\":[{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"\\\\nThis dashboard monitors the CloudWatch Logs for the MediaStore container and shows data points for                     both ingress and egress operations while the live stream is running. This dashboard monitors the CloudWatch                     Logs for the MediaStore container and shows data points for both ingress and egress operations while the live stream is running.                     An IAM Role is required to allow MediaStore to write to CloudWatch Logs. If you do not see any data points on this dashboard, please follow                     [these instructions to create the Role](https://docs.aws.amazon.com/mediastore/latest/ug/monitoring-cloudwatch-permissions.html).\\\\n\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingress Transaction Per Minute\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | fields @message\\\\n| filter (Path like \\\\\\"/stream/index\\\\\\") and (Operation=\\\\\\"PutObject\\\\\\")\\\\n| stats count(*) as TPM by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Egress Transaction Per Minute\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | fields @message\\\\n| filter (Path like \\\\\\"/stream/index\\\\\\") and (Operation=\\\\\\"GetObject\\\\\\")\\\\n| stats count(*) as TPM by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingress PutObject Latencies (Successful Requests)\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter HTTPStatus like /2\\\\\\\\d{2}/ and Operation=\\\\\\"PutObject\\\\\\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":8,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Egress GetObject Latencies (Successful Requests)\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter HTTPStatus like /2\\\\\\\\d{2}/ and Operation=\\\\\\"GetObject\\\\\\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Ingress 2xx Status Count by Operation\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter (Path like \\\\\\"/stream/index\\\\\\") | filter HTTPStatus like /2\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"PutObject\\\\\\" or Operation=\\\\\\"DeleteObject\\\\\\"\\\\n| stats count() as '2xx Count' by Operation | sort '2xx Count' desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Egress 2xx Status Count by Operation\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter (Path like \\\\\\"/stream/index\\\\\\") | filter HTTPStatus like /2\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"GetObject\\\\\\" \\\\n| stats count() as '2xx Count' by Operation | sort '2xx Count' desc\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Ingress 4xx Status Count\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /4\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"PutObject\\\\\\"\\\\n| stats count() as '4xx Count' by Operation\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Ingress 5xx Status Count\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /5\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"PutObject\\\\\\"\\\\n| stats count() as '5xx Count' by Operation\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Egress 4xx Status Count\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /4\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"GetObject\\\\\\"\\\\n| stats count() as '4xx Count' by Operation\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Egress 5xx Status Count\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /5\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"GetObject\\\\\\"\\\\n| stats count() as '5xx Count' by Operation\\"}}]}",
+            ],
+          ],
+        },
+        "DashboardName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-",
+              Object {
+                "Ref": "AWS::Region",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::Dashboard",
+    },
+    "MediaLiveChannel": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Codec": "AVC",
+        "EncodingProfile": Object {
+          "Ref": "EncodingProfile",
+        },
+        "InputId": Object {
+          "Fn::GetAtt": Array [
+            "MediaLiveInput",
+            "Id",
+          ],
+        },
+        "MediaStoreEndpoint": Object {
+          "Fn::GetAtt": Array [
+            "CloudFrontToMediaStoreMediaStoreContainer2EAAC53A",
+            "Endpoint",
+          ],
+        },
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "MediaLiveRole1149D189",
+            "Arn",
+          ],
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomResource8CDCD7A7",
+            "Arn",
+          ],
+        },
+        "StreamName": Object {
+          "Ref": "AWS::StackName",
+        },
+        "Type": Object {
+          "Ref": "InputType",
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "MediaLiveChannelStart": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "CloudFrontToMediaStoreCloudFrontDistribution36D55136",
+      ],
+      "Properties": Object {
+        "ChannelId": Object {
+          "Fn::GetAtt": Array [
+            "MediaLiveChannel",
+            "ChannelId",
+          ],
+        },
+        "ChannelStart": Object {
+          "Ref": "ChannelStart",
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomResource8CDCD7A7",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "MediaLiveInput": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Cidr": Object {
+          "Ref": "InputCIDR",
+        },
+        "InputDeviceId": Object {
+          "Ref": "InputDeviceId",
+        },
+        "PullPass": Object {
+          "Ref": "PullPass",
+        },
+        "PullUrl": Object {
+          "Ref": "PullUrl",
+        },
+        "PullUser": Object {
+          "Ref": "PullUser",
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomResource8CDCD7A7",
+            "Arn",
+          ],
+        },
+        "StreamName": Object {
+          "Ref": "AWS::StackName",
+        },
+        "Type": Object {
+          "Ref": "InputType",
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "MediaLiveRole1149D189": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "medialive.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "UUID": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomResource8CDCD7A7",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "mediaLivePolicyA0AA0DF7": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "mediastore:DeleteObject",
+                "mediastore:DescribeObject",
+                "mediastore:GetObject",
+                "mediastore:ListItems",
+                "mediastore:PutObject",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":mediastore:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "ssm:DescribeParameters",
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:PutParameter",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ssm:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "mediaLivePolicyA0AA0DF7",
+        "Roles": Array [
+          Object {
+            "Ref": "MediaLiveRole1149D189",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

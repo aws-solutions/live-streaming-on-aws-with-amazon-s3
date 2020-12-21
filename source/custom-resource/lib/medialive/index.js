@@ -235,6 +235,7 @@ const deleteInput = async (InputId) => {
  * Description: creates a medialive channel and then call the waitFor function to confirm the channel creation is successful.
  * @param {object} config  the configuration settings for input:
  * @param {string} config.EncodingProfile  should one of HD-1080p, HD-720p, SD-540p.
+ * @param {string} config.StreamName the name for the MediaLive channel, default is the StackName
  * @param {string} config.Codec encoding codec option, default is AVC.
  * @param {string} config.Role  the MediaLive IAM Role associated with the channel.
  * @param {string} config.InputId  the ID of the medialive input to attach to the channel.
@@ -266,7 +267,7 @@ const createChannel = async (config) => {
                 Resolution: '',
                 MaximumBitrate: ''
             },
-            Name: config.Name,
+            Name: config.StreamName,
             RoleArn: config.Role,
             InputAttachments: [{
                 InputId: config.InputId,

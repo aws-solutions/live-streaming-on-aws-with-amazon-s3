@@ -20,13 +20,14 @@ THIRD PARTY COMPONENTS
 This software includes third party software subject to the following copyrights:
 
 AWS SDK under the Apache License Version 2.0
-requests under the Apache License Version 2.0
-
-Stanford Javascript Crypto Library under the BSD license or under the GNU GPL, version 2.0
-Moment.js under the Massachusetts Institute of Technology (MIT) license
-uuid.js under the Massachusetts Institute of Technology (MIT) license
+AWS CDK under the Apache License Version 2.0
 axios under the Massachusetts Institute of Technology (MIT) license
 axios-mock-adapter under the Massachusetts Institute of Technology (MIT) license
+moment under the Massachusetts Institute of Technology (MIT) license
+uuid under the Massachusetts Institute of Technology (MIT) license
+jest under the Massachusetts Institute of Technology (MIT) license
+requests under the Apache License Version 2.0
+Stanford Javascript Crypto Library under the BSD license or under the GNU GPL, version 2.0
 chai under the Massachusetts Institute of Technology (MIT) license
 mocha under the Massachusetts Institute of Technology (MIT) license
 aws-sdk-mock under the Massachusetts Institute of Technology (MIT) license

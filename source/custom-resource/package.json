@@ -1,8 +1,8 @@
 {
   "name": "live-streaming-single-pipeline",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "engines": {
-    "node": "^8.10"
+    "node": "^10.10"
   },
   "description": "cfn custom resources for vod workflow",
   "main": "na",

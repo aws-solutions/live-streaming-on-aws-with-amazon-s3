@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
    try {
     switch (event.RequestType) {
       case 'Create':
-        switch (config.Resource) {
+        switch (event.LogicalResourceId) {
           case 'MediaLiveInput':
             switch (config.Type) {
               case 'INPUT_DEVICE':
@@ -53,7 +53,9 @@ exports.handler = async (event, context) => {
             Id = responseData.ChannelId;
             break;
           case 'MediaLiveChannelStart':
-            await mediaLive.startChannel(config);
+            if (config.ChannelStart === 'Yes') {
+                await mediaLive.startChannel(config);
+            }
             break;
           case 'MediaStoreDomain':
             responseData = {
@@ -64,7 +66,9 @@ exports.handler = async (event, context) => {
             responseData.UUID = uuid.v4();
             break;
           case ('AnonymousMetric'):
-            await metrics.send(config);
+              if (config.SendAnonymousMetric) {
+                await metrics.send(config);
+              }
             break;
           default:
             throw new Error('Resource is not defiend');
@@ -74,7 +78,7 @@ exports.handler = async (event, context) => {
         responseData = 'update currently not supported, please delete the stack and launch a new one';
         break;
       case 'Delete':
-        switch (config.Resource) {
+        switch (event.LogicalResourceId) {
           case 'MediaLiveChannel':
             await mediaLive.deleteChannel(event.PhysicalResourceId);
             break;
