@@ -63,6 +63,9 @@ npm install --production
 echo "------------------------------------------------------------------------------"
 echo "[Synth] CDK Project"
 echo "------------------------------------------------------------------------------"
+# Make sure user has the newest CDK version
+npm uninstall -g aws-cdk && npm install -g aws-cdk
+
 cd $source_dir/constructs
 npm install
 cdk synth --output=$staging_dist_dir

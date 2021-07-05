@@ -393,6 +393,9 @@ Object {
             Object {
               "CustomOriginConfig": Object {
                 "OriginProtocolPolicy": "https-only",
+                "OriginSSLProtocols": Array [
+                  "TLSv1.2",
+                ],
               },
               "DomainName": Object {
                 "Fn::Select": Array [
@@ -485,6 +488,9 @@ Object {
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
@@ -614,11 +620,11 @@ Object {
               Object {
                 "Ref": "AWS::StackName",
               },
-              "/*\\",\\"Condition\\":{\\"Bool\\":{\\"aws:UserAgent\\":\\"",
+              "/*\\",\\"Condition\\":{\\"StringEquals\\":{\\"aws:UserAgent\\":\\"",
               Object {
                 "Ref": "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3",
               },
-              "\\",\\"aws:SecureTransport\\":\\"true\\"}}}]}",
+              "\\"},\\"Bool\\":{\\"aws:SecureTransport\\":\\"true\\"}}}]}",
             ],
           ],
         },
