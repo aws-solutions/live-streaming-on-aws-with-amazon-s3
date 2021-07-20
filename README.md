@@ -116,5 +116,5 @@ aws s3 sync ./global-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-w
 
 This solution collects anonymous operational metrics to help AWS improve the
 quality of features of the solution. For more information, including how to disable
-this capability, please see the [implementation guide](_https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/collection-of-operational-metrics.html_). 
+this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/collection-of-operational-metrics.html). 
 
