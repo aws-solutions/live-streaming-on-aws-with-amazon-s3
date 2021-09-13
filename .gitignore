@@ -5,3 +5,4 @@ dev/
 global-s3-assets/
 regional-s3-assets/
 open-source/
+.DS_Store
