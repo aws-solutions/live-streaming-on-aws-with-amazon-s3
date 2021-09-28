@@ -101,12 +101,11 @@ for d in `find . -mindepth 1 -maxdepth 1 -type d`; do
     pfname="$(basename -- $d)"
     fname="$(echo $pfname | sed -e 's/\.//g')"
     mv $d $fname
-
     # Zip artifacts from asset folder
     cd $fname
     rm -rf node_modules/
     rm -rf coverage/
-    npm ci --silent --production
+    npm ci --production
     zip -rq ../$fname.zip *
     cd ..
 

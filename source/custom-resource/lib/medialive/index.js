@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -22,7 +22,8 @@ const AWS = require('aws-sdk');
 const createDeviceInput = async (config) => {
     console.log('Creating Link Input.....');
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     let responseData
     try {
@@ -57,7 +58,8 @@ const createDeviceInput = async (config) => {
 const createRtpInput = async (config) => {
     console.log('Creating RTP Input.....');
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     let responseData,
         params,
@@ -96,7 +98,8 @@ const createRtpInput = async (config) => {
 const createRtmpInput = async (config) => {
     console.log('Creating RTMP Input.....');
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     let responseData,
         params,
@@ -140,10 +143,12 @@ const createRtmpInput = async (config) => {
 const createUrlInput = async (config) => {
     console.log('Creating URL_PULL Input.....');
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     const ssm = new AWS.SSM({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     let responseData,
         params,
@@ -193,7 +198,8 @@ const deleteInput = async (InputId) => {
     console.log('Deleting Input.....');
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     let params,
         data;
@@ -244,7 +250,8 @@ const deleteInput = async (InputId) => {
  */
 const createChannel = async (config) => {
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     const encode1080p = require('./encoding-profiles/hd-1080p');
     const encode720p = require('./encoding-profiles/hd-720p');
@@ -328,7 +335,8 @@ const createChannel = async (config) => {
 const startChannel = async (config) => {
     console.log('Starting Channel.....');
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     try {
         let params = {
@@ -349,7 +357,8 @@ const startChannel = async (config) => {
 const deleteChannel = async (ChannelId) => {
     console.log('Deleting Channel.....');
     const medialive = new AWS.MediaLive({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
     let params,
         data;

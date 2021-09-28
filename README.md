@@ -45,19 +45,19 @@ The solution includes an Amazon CloudWatch Dashboard that is configured to monit
 Before you launch the solution, you must create a MediaStore IAM Role and associated policy to allow MediaStore access to Amazon CloudWatch. The solution will launch successfully but without this Role the Amazon CloudWatch Dashboard deployed as part of the solution will not work. This is a one-time requirement, once created the role will authorize logging for all MediaStore Containers (if enabled). For details please see the [MediaStore documentation](https://docs.aws.amazon.com/mediastore/latest/ug/incident-response.html)
 
 ## Deployment
-The solution can be deployed through the CloudFormation template available on the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/). 
+The solution can be deployed through the CloudFormation template available on the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/).
 
 ## Creating a custom build
 
 ### Prerequisites:
 * [AWS Command Line Interface](https://aws.amazon.com/cli/)
 * Node.js 12.x or later
-* AWS CDK 1.73.0
+* AWS CDK 1.102.0
 
 The are 2 options for deploying the solution: using the CDK deployment tools or running the build script to generate a CFN template and the packaged lambda code.
 
 ### Options 1: Deploying through the CDK.
-This option simply follows the standard CDK deployment process, for easy of use we have included the deployment/build-cdk-deploy.sh BASH script that will run the lambda unit tests, run the cdk unit tests and then run `cdk deploy` in the source/cdk folder. You will need to run `cdk bootstrap` before you run cdk deply the first time to setup the cdk resource in your AWS account. Details on using the CDK can be found [here].
+This options simply flollows the standard CDK deployment process, for easy of use we have included the deployment/build-cdk-deploy.sh BASH script that will run the lambda unit tests, run the cdk unit tests and then run `cdk deploy` in the source/cdk folder. You will need to run `cdk bootstrap` before you run cdk deply the first time to setup the cdk resource in your AWS account. Details on using the CDK can be found [here].
 
 1. Download or clone the repo and make the required changes to the source code.
 2. installl the dependecies for the lambda function and construct.
@@ -95,26 +95,38 @@ aws s3 mb s3://my-bucket-us-east-1
 Build the distributable:
 ```
 chmod +x ./build-s3-dist.sh
-./build-s3-dist.sh <bucketname> live-streaming-on-aws-with-mediastore <version>
+./build-s3-dist.sh <my-bucket> live-streaming-on-aws-with-mediastore <version>
 ```
 
-> **Notes**: The _build-s3-dist_ script expects the bucket name as one of its parameters, and this value should not include the region suffix
+> **Notes**: The _build-s3-dist_ script expects the bucket name as one of its parameters. This value should not have the region suffix (remove the -us-east-1)
+
+Ensure that you are owner of the AWS S3 bucket. 
+```
+aws s3api head-bucket --bucket my-bucket-us-east-1 --expected-bucket-owner YOUR-AWS-ACCOUNT-NUMBER
+```
 
 Deploy the distributable to the Amazon S3 bucket in your account:
 ```
-aws s3 sync ./regional-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-mediastore/<version>/ --acl public-read
-aws s3 sync ./global-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-mediastore/<version>/ --acl public-read
+aws s3 sync ./regional-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-mediastore/<version>/ 
+aws s3 sync ./global-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-mediastore/<version>/ 
 ```
 
 ### 5. Launch the CloudFormation template.
 * Get the link of the live-streaming-on-aws-with-mediastore.template uploaded to your Amazon S3 bucket.
 * Deploy the solution.
 
+
+## Deploying with minimum permissions
+
+When deploying this solution you may have a DevOps operator IAM user that deploys this CloudFormation template. The json file located at the following directory is the minimum IAM permissions that an AWS IAM user needs to be able to deploy the CloudFormation template successfully. 
+
+`deployment/min_user_iam_deploy.json`
+
 ## License
 
 * This project is licensed under the terms of the Apache 2.0 license. See `LICENSE`.
 
+
 This solution collects anonymous operational metrics to help AWS improve the
 quality of features of the solution. For more information, including how to disable
-this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/collection-of-operational-metrics.html). 
-
+this capability, please see the [implementation guide](_https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/collection-of-operational-metrics.html_). 

@@ -4,12 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2021-9-27
+### Added 
+- Added new section that explains the minimum IAM permissions a AWS IAM user needs to deploy this CloudFormation template.
+
+### Changed
+- The Amazon CloudFront distribution TTL values were modified to 1 second for all http error codes. 403, 404, 405, 500, 501, 503, and 504.
+- New Amazon CloudFront cache policy that includes the "Origin" header.
+- Updated outdated node.js packages.
+
+### Fixed
+- Removed logging of AWS MediaLive input details since they could contain input passwords.
+- Fixed the AWS CloudWatch Dashboard url on the CloudFormation output page.
+- Removed --silent from npm commands for custom builds to make it so building will not fail silently. 
+- Readme (https://github.com/awslabs/video-on-demand-on-aws-foundations/issues/12)
+
+
 ## [1.2.1] - 2021-7-1
-### Added
+### Fixed
 - Updated CFN template for aws-cloudfront-mediastore CDK. 
 - MediaStore policy is now retricting to only requests from Amazon CloudFront.
-- Updated the README file.
-- Dependbot updates to glob-parent and y18n. 
+- Updated README.
+
 
 ## [1.2.0] - 2020-12-21
 ### Added

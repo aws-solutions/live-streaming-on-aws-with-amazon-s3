@@ -149,4 +149,4 @@ After:
   ```
 
 ***
-&copy; Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+&copy; Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.

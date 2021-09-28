@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -18,6 +18,7 @@ import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 
 //Solution construct
 import { CloudFrontToMediaStore } from '@aws-solutions-constructs/aws-cloudfront-mediastore';
+import { CachePolicy } from '@aws-cdk/aws-cloudfront';
 
 export class LiveStreaming extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -144,7 +145,22 @@ export class LiveStreaming extends cdk.Stack {
          * Disabling the default settings for security headers and update the lifecycle policy to delete expired
          * .ts segments after 5 minutes.
          */
-        const distibution = new CloudFrontToMediaStore(this,'CloudFrontToMediaStore',{
+        const cachePolicy = new CachePolicy(this, 'CachePolicy', {
+            headerBehavior: {
+              behavior: 'whitelist',
+              headers: ['Origin']
+            }
+        });
+
+        const distibution = new CloudFrontToMediaStore(this, 'CloudFrontToMediaStore', {
+            cloudFrontDistributionProps: {
+              defaultBehavior: {
+                cachePolicy
+              },
+              errorResponses: [400, 403, 404, 405, 414, 416, 500, 501, 502, 503, 504].map((httpStatus: number) => {
+                return { httpStatus, ttl: cdk.Duration.seconds(1) };
+              })
+            },
             insertHttpSecurityHeaders: false
         });
         distibution.mediaStoreContainer.lifecyclePolicy = JSON.stringify({
@@ -197,6 +213,9 @@ export class LiveStreaming extends cdk.Stack {
             runtime: lambda.Runtime.NODEJS_12_X,
             handler: 'index.handler',
             description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
+            environment: {
+                SOLUTION_IDENTIFIER: 'AwsSolution/SO0109/v2.0.0'
+            },
             code: lambda.Code.fromAsset('../custom-resource'),
             timeout: cdk.Duration.seconds(30),
             initialPolicy: [
@@ -236,6 +255,12 @@ export class LiveStreaming extends cdk.Stack {
                 rules_to_suppress: [{
                     id: 'W58',
                     reason: 'Invalid warning: function has access to cloudwatch'
+                },{
+                    id: 'W89',
+                    reason: 'This CustomResource does not need to be deployed inside a VPC'
+                },{
+                    id: 'W92',
+                    reason: 'This CustomResource does not need to define ReservedConcurrentExecutions to reserve simultaneous executions'
                 }]
             }
         };
@@ -435,7 +460,7 @@ export class LiveStreaming extends cdk.Stack {
             exportName: `${cdk.Aws.STACK_NAME}-MediaStoreConsole`
         });
         new cdk.CfnOutput(this, 'CloudWatchDashboard', {
-            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${cdk.Aws.REGION}#dashboards:name=${cdk.Aws.STACK_NAME}-MediaStore-Live-Streaming`,
+            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${cdk.Aws.REGION}#dashboards:name=${cdk.Aws.STACK_NAME}-${cdk.Aws.REGION}`,
             description: 'CloudWatch Dashboard for MediaStore Ingress and Egress',
             exportName: `${cdk.Aws.STACK_NAME}-CloudWatchDashboard`
         });

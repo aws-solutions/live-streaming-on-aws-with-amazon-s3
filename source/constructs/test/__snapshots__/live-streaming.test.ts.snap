@@ -117,7 +117,10 @@ Object {
             Object {
               "Ref": "AWS::StackName",
             },
-            "-MediaStore-Live-Streaming",
+            "-",
+            Object {
+              "Ref": "AWS::Region",
+            },
           ],
         ],
       },
@@ -237,16 +240,16 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73ArtifactHashC8CA8A8F": Object {
-      "Description": "Artifact hash for asset \\"3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73\\"",
+    "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80ArtifactHash97F2D62E": Object {
+      "Description": "Artifact hash for asset \\"8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80\\"",
       "Type": "String",
     },
-    "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3Bucket013B9B3B": Object {
-      "Description": "S3 bucket for asset \\"3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73\\"",
+    "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3Bucket9C1490D7": Object {
+      "Description": "S3 bucket for asset \\"8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80\\"",
       "Type": "String",
     },
-    "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3VersionKey432012AC": Object {
-      "Description": "S3 key for asset version \\"3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73\\"",
+    "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3VersionKey1FADC5E4": Object {
+      "Description": "S3 key for asset version \\"8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80\\"",
       "Type": "String",
     },
     "ChannelStart": Object {
@@ -346,6 +349,43 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
+    "CachePolicy26D8A535": Object {
+      "Properties": Object {
+        "CachePolicyConfig": Object {
+          "DefaultTTL": 86400,
+          "MaxTTL": 31536000,
+          "MinTTL": 0,
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "LiveStreamingCachePolicy36FCA70B-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
+          "ParametersInCacheKeyAndForwardedToOrigin": Object {
+            "CookiesConfig": Object {
+              "CookieBehavior": "none",
+            },
+            "EnableAcceptEncodingBrotli": false,
+            "EnableAcceptEncodingGzip": false,
+            "HeadersConfig": Object {
+              "HeaderBehavior": "whitelist",
+              "Headers": Array [
+                "Origin",
+              ],
+            },
+            "QueryStringsConfig": Object {
+              "QueryStringBehavior": "none",
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CachePolicy",
+    },
     "CloudFrontToMediaStoreCloudFrontDistribution36D55136": Object {
       "Metadata": Object {
         "cfn_nag": Object {
@@ -359,13 +399,61 @@ Object {
       },
       "Properties": Object {
         "DistributionConfig": Object {
+          "CustomErrorResponses": Array [
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 400,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 403,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 404,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 405,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 414,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 416,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 500,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 501,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 502,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 503,
+            },
+            Object {
+              "ErrorCachingMinTTL": 1,
+              "ErrorCode": 504,
+            },
+          ],
           "DefaultCacheBehavior": Object {
             "AllowedMethods": Array [
               "GET",
               "HEAD",
               "OPTIONS",
             ],
-            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "CachePolicyId": Object {
+              "Ref": "CachePolicy26D8A535",
+            },
             "CachedMethods": Array [
               "GET",
               "HEAD",
@@ -643,13 +731,21 @@ Object {
               "id": "W58",
               "reason": "Invalid warning: function has access to cloudwatch",
             },
+            Object {
+              "id": "W89",
+              "reason": "This CustomResource does not need to be deployed inside a VPC",
+            },
+            Object {
+              "id": "W92",
+              "reason": "This CustomResource does not need to define ReservedConcurrentExecutions to reserve simultaneous executions",
+            },
           ],
         },
       },
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3Bucket013B9B3B",
+            "Ref": "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3Bucket9C1490D7",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -662,7 +758,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3VersionKey432012AC",
+                          "Ref": "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3VersionKey1FADC5E4",
                         },
                       ],
                     },
@@ -675,7 +771,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters3421bcdd1cd4d21cd28cf599699ae0f2fb3b1878c2434614a1994fb970722e73S3VersionKey432012AC",
+                          "Ref": "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3VersionKey1FADC5E4",
                         },
                       ],
                     },
@@ -686,6 +782,11 @@ Object {
           },
         },
         "Description": "CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint",
+        "Environment": Object {
+          "Variables": Object {
+            "SOLUTION_IDENTIFIER": "AwsSolution/SO0109/v2.0.0",
+          },
+        },
         "Handler": "index.handler",
         "Role": Object {
           "Fn::GetAtt": Array [
