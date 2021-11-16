@@ -26,7 +26,7 @@ export class LiveStreaming extends cdk.Stack {
         /**
          * CloudFormation Template Descrption
          */
-        this.templateOptions.description = 'SO0109 Live Streaming on AWS with MediaStore Solution %%VERSION%%';
+        this.templateOptions.description = '(SO0109) Live Streaming on AWS with MediaStore Solution %%VERSION%%';
         /**
          * Cfn Parameters
          */
@@ -70,7 +70,7 @@ export class LiveStreaming extends cdk.Stack {
         const channelStart = new cdk.CfnParameter(this, 'ChannelStart', {
             type: 'String',
             description: 'If your source is ready to stream select true, this wil start the MediaLive Channel as part of the deployment. If you select false you will need to manually start the MediaLive Channel when your source is ready.',
-            default: 'Yes',
+            default: 'No',
             allowedValues: ['Yes', 'No']
         });
         /**
@@ -202,7 +202,36 @@ export class LiveStreaming extends cdk.Stack {
                         'ssm:PutParameter'
                     ]
                 }),
-
+                new iam.PolicyStatement({
+                    resources: [`arn:${cdk.Aws.PARTITION}:mediaconnect:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:*`],
+                    actions: [
+                        'mediaconnect:ManagedDescribeFlow',
+                        'mediaconnect:ManagedAddOutput',
+                        'mediaconnect:ManagedRemoveOutput'
+                    ]
+                }),
+                new iam.PolicyStatement({
+                    resources: [`arn:${cdk.Aws.PARTITION}:ec2:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:*`],
+                    actions: [
+                        'ec2:describeSubnets',
+                        'ec2:describeNetworkInterfaces',
+                        'ec2:createNetworkInterface',
+                        'ec2:createNetworkInterfacePermission',
+                        'ec2:deleteNetworkInterface',
+                        'ec2:deleteNetworkInterfacePermission',
+                        'ec2:describeSecurityGroups'
+                    ]
+                }),
+                new iam.PolicyStatement({
+                    resources: [`arn:${cdk.Aws.PARTITION}:logs:*:*:*`],
+                    actions: [
+                        'logs:CreateLogGroup',
+                        'logs:CreateLogStream',
+                        'logs:PutLogEvents',
+                        'logs:DescribeLogStreams',
+                        'logs:DescribeLogGroups'
+                    ]
+                }),
             ]
         });
         mediaLivePolicy.attachToRole(mediaLiveRole);
@@ -233,7 +262,8 @@ export class LiveStreaming extends cdk.Stack {
                         'medialive:deleteInputSecurityGroup',
                         'medialive:describeChannel',
                         'medialive:startChannel',
-                        'medialive:tagResource'
+                        'medialive:createTags',
+                        'medialive:deleteTags'
                     ]
                 }),
                 new iam.PolicyStatement({

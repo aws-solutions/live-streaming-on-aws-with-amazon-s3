@@ -2,7 +2,7 @@
 
 exports[`LiveStreaming Stack Test 1`] = `
 Object {
-  "Description": "SO0109 Live Streaming on AWS with MediaStore Solution %%VERSION%%",
+  "Description": "(SO0109) Live Streaming on AWS with MediaStore Solution %%VERSION%%",
   "Mappings": Object {
     "AnonymousData": Object {
       "SendAnonymousData": Object {
@@ -240,16 +240,16 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80ArtifactHash97F2D62E": Object {
-      "Description": "Artifact hash for asset \\"8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80\\"",
+    "AssetParameterse29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09ArtifactHash5976759E": Object {
+      "Description": "Artifact hash for asset \\"e29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09\\"",
       "Type": "String",
     },
-    "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3Bucket9C1490D7": Object {
-      "Description": "S3 bucket for asset \\"8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80\\"",
+    "AssetParameterse29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09S3BucketD49D65F8": Object {
+      "Description": "S3 bucket for asset \\"e29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09\\"",
       "Type": "String",
     },
-    "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3VersionKey1FADC5E4": Object {
-      "Description": "S3 key for asset version \\"8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80\\"",
+    "AssetParameterse29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09S3VersionKeyCF53DBA2": Object {
+      "Description": "S3 key for asset version \\"e29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09\\"",
       "Type": "String",
     },
     "ChannelStart": Object {
@@ -257,7 +257,7 @@ Object {
         "Yes",
         "No",
       ],
-      "Default": "Yes",
+      "Default": "No",
       "Description": "If your source is ready to stream select true, this wil start the MediaLive Channel as part of the deployment. If you select false you will need to manually start the MediaLive Channel when your source is ready.",
       "Type": "String",
     },
@@ -599,21 +599,31 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
+              "Principal": Object {
+                "AWS": "*",
               },
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                    "Arn",
+                  ],
+                },
+              ],
               "Sid": "HttpsOnly",
             },
           ],
@@ -745,7 +755,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3Bucket9C1490D7",
+            "Ref": "AssetParameterse29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09S3BucketD49D65F8",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -758,7 +768,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3VersionKey1FADC5E4",
+                          "Ref": "AssetParameterse29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09S3VersionKeyCF53DBA2",
                         },
                       ],
                     },
@@ -771,7 +781,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8ffa6826e66814b93548e6c75394875744880a6c90979aceb79f7e0254a7ea80S3VersionKey1FADC5E4",
+                          "Ref": "AssetParameterse29d21d34295c066e6559c80215d2a28944b80ecee2ba73885a445b12aa20d09S3VersionKeyCF53DBA2",
                         },
                       ],
                     },
@@ -816,7 +826,8 @@ Object {
                 "medialive:deleteInputSecurityGroup",
                 "medialive:describeChannel",
                 "medialive:startChannel",
-                "medialive:tagResource",
+                "medialive:createTags",
+                "medialive:deleteTags",
               ],
               "Effect": "Allow",
               "Resource": Object {
@@ -1213,6 +1224,88 @@ Object {
                       "Ref": "AWS::AccountId",
                     },
                     ":parameter/*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "mediaconnect:ManagedDescribeFlow",
+                "mediaconnect:ManagedAddOutput",
+                "mediaconnect:ManagedRemoveOutput",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":mediaconnect:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "ec2:describeSubnets",
+                "ec2:describeNetworkInterfaces",
+                "ec2:createNetworkInterface",
+                "ec2:createNetworkInterfacePermission",
+                "ec2:deleteNetworkInterface",
+                "ec2:deleteNetworkInterfacePermission",
+                "ec2:describeSecurityGroups",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ec2:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams",
+                "logs:DescribeLogGroups",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:*",
                   ],
                 ],
               },
