@@ -243,7 +243,7 @@ export class LiveStreaming extends cdk.Stack {
             handler: 'index.handler',
             description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
             environment: {
-                SOLUTION_IDENTIFIER: 'AwsSolution/SO0109/v2.0.0'
+                SOLUTION_IDENTIFIER: 'AwsSolution/SO0109/%%VERSION%%'
             },
             code: lambda.Code.fromAsset('../custom-resource'),
             timeout: cdk.Duration.seconds(30),

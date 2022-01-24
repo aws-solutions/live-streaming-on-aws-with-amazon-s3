@@ -794,7 +794,7 @@ Object {
         "Description": "CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint",
         "Environment": Object {
           "Variables": Object {
-            "SOLUTION_IDENTIFIER": "AwsSolution/SO0109/v2.0.0",
+            "SOLUTION_IDENTIFIER": "AwsSolution/SO0109/%%VERSION%%",
           },
         },
         "Handler": "index.handler",
