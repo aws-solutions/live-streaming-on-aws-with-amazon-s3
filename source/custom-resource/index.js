@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
   
   const resource = event.ResourceProperties.Resource;
   if(resource == "MediaLiveInput"){
-    // Do not log MediaLive input. Which may contain sensative passwords
+    // Do not log MediaLive input. Which may contain sensitive passwords
   }else{
     console.log(JSON.stringify(event,null,2));
   }
@@ -63,11 +63,6 @@ exports.handler = async (event, context) => {
             if (config.ChannelStart === 'Yes') {
                 await mediaLive.startChannel(config);
             }
-            break;
-          case 'MediaStoreDomain':
-            responseData = {
-              DomainName:config.MediaStoreEndpoint.slice(8)
-            };
             break;
           case ('UUID'):
             responseData.UUID = uuid.v4();

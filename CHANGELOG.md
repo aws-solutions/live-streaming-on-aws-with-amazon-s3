@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2022-3-10
+
+### Added
+- Added Amazon S3 construct to replace AWS MediaStore for storing video segments.
+- Amazon S3 request metrics added, including first byte latency, and total latency of each request.
+
+### Changed
+- Github repo name changed from live-streaming-on-aws-with-mediastore to live-streaming-on-aws-with-amazon-s3.
+- Removed mediastore actions from min_user_iam_deploy.json.
+- Updated architecture diagram.
+- Changed references to MediaStore in implementation guide to Amazon S3. 
+- Removed CloudWatch MediaStore dashboard.
+- Replaced mentions of MediaStore with Amazon S3 where appropriate.
+- Package follow-redirects updated to 1.14.8
+- Replaced resource urls pointing to MediaStore with Amazon S3 urls. 
+
 ## [2.1.1] - 2022-1-24
 
 ### Updated

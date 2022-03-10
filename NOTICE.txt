@@ -1,4 +1,4 @@
-Live Streaming on AWS with MediaStore
+Live Streaming on AWS with Amazon S3
 
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 

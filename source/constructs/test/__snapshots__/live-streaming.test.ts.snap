@@ -2,7 +2,7 @@
 
 exports[`LiveStreaming Stack Test 1`] = `
 Object {
-  "Description": "(SO0109) Live Streaming on AWS with MediaStore Solution %%VERSION%%",
+  "Description": "(SO0109) Live Streaming on AWS with Amazon S3 Solution %%VERSION%%",
   "Mappings": Object {
     "AnonymousData": Object {
       "SendAnonymousData": Object {
@@ -86,8 +86,8 @@ Object {
     },
   },
   "Outputs": Object {
-    "CloudWatchDashboard": Object {
-      "Description": "CloudWatch Dashboard for MediaStore Ingress and Egress",
+    "BucketMetrics": Object {
+      "Description": "Bucket Request Metrics",
       "Export": Object {
         "Name": Object {
           "Fn::Join": Array [
@@ -96,7 +96,7 @@ Object {
               Object {
                 "Ref": "AWS::StackName",
               },
-              "-CloudWatchDashboard",
+              "-BucketMetrics",
             ],
           ],
         },
@@ -109,15 +109,47 @@ Object {
             Object {
               "Ref": "AWS::Region",
             },
-            ".console.aws.amazon.com/cloudwatch/home?region=",
+            ".console.aws.amazon.com/s3/bucket/",
+            Object {
+              "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
+            },
+            "/metrics/bucket_metrics?region=",
             Object {
               "Ref": "AWS::Region",
             },
-            "#dashboards:name=",
+            "&tab=request&period=1h",
+          ],
+        ],
+      },
+    },
+    "LiveStreamBucket": Object {
+      "Description": "Live Stream Destination Bucket",
+      "Export": Object {
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-LiveStreamBucket",
+            ],
+          ],
+        },
+      },
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
             Object {
-              "Ref": "AWS::StackName",
+              "Ref": "AWS::Region",
             },
-            "-",
+            ".console.aws.amazon.com/s3/buckets/",
+            Object {
+              "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
+            },
+            "?region=",
             Object {
               "Ref": "AWS::Region",
             },
@@ -147,7 +179,7 @@ Object {
             "https://",
             Object {
               "Fn::GetAtt": Array [
-                "CloudFrontToMediaStoreCloudFrontDistribution36D55136",
+                "CloudFrontToS3CloudFrontDistribution241D9866",
                 "DomainName",
               ],
             },
@@ -210,46 +242,18 @@ Object {
         ],
       },
     },
-    "MediaStoreConsole": Object {
-      "Description": "MediaStore Container",
-      "Export": Object {
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "-MediaStoreConsole",
-            ],
-          ],
-        },
-      },
-      "Value": Object {
-        "Fn::Join": Array [
-          "",
-          Array [
-            "https://",
-            Object {
-              "Ref": "AWS::Region",
-            },
-            ".console.aws.amazon.com/mediastore/home/containers/",
-          ],
-        ],
-      },
-    },
   },
   "Parameters": Object {
-    "AssetParameters8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0aArtifactHash1C4D014A": Object {
-      "Description": "Artifact hash for asset \\"8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0a\\"",
+    "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210ArtifactHash3B1AB7E6": Object {
+      "Description": "Artifact hash for asset \\"86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210\\"",
       "Type": "String",
     },
-    "AssetParameters8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0aS3BucketF223456B": Object {
-      "Description": "S3 bucket for asset \\"8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0a\\"",
+    "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3Bucket4EEC6A35": Object {
+      "Description": "S3 bucket for asset \\"86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210\\"",
       "Type": "String",
     },
-    "AssetParameters8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0aS3VersionKey1539E2AF": Object {
-      "Description": "S3 key for asset version \\"8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0a\\"",
+    "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3VersionKey9A0AA1FE": Object {
+      "Description": "S3 key for asset version \\"86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210\\"",
       "Type": "String",
     },
     "ChannelStart": Object {
@@ -289,7 +293,7 @@ Object {
         "INPUT_DEVICE",
       ],
       "Default": "URL_PULL",
-      "Description": "Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/appendix-a.html.",
+      "Description": "Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-amazon-s3/appendix-a.html.",
       "Type": "String",
     },
     "PullPass": Object {
@@ -386,7 +390,7 @@ Object {
       },
       "Type": "AWS::CloudFront::CachePolicy",
     },
-    "CloudFrontToMediaStoreCloudFrontDistribution36D55136": Object {
+    "CloudFrontToS3CloudFrontDistribution241D9866": Object {
       "Metadata": Object {
         "cfn_nag": Object {
           "rules_to_suppress": Array [
@@ -446,109 +450,62 @@ Object {
             },
           ],
           "DefaultCacheBehavior": Object {
-            "AllowedMethods": Array [
-              "GET",
-              "HEAD",
-              "OPTIONS",
-            ],
             "CachePolicyId": Object {
               "Ref": "CachePolicy26D8A535",
             },
-            "CachedMethods": Array [
-              "GET",
-              "HEAD",
-              "OPTIONS",
-            ],
             "Compress": true,
-            "OriginRequestPolicyId": Object {
-              "Ref": "CloudFrontToMediaStoreCloudfrontOriginRequestPolicyE5B13E44",
-            },
-            "TargetOriginId": "LiveStreamingCloudFrontToMediaStoreCloudFrontDistributionOrigin1A3A57054",
+            "TargetOriginId": "LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB",
             "ViewerProtocolPolicy": "redirect-to-https",
           },
+          "DefaultRootObject": "index.html",
           "Enabled": true,
           "HttpVersion": "http2",
           "IPV6Enabled": true,
           "Logging": Object {
             "Bucket": Object {
               "Fn::GetAtt": Array [
-                "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
                 "RegionalDomainName",
               ],
             },
           },
           "Origins": Array [
             Object {
-              "CustomOriginConfig": Object {
-                "OriginProtocolPolicy": "https-only",
-                "OriginSSLProtocols": Array [
-                  "TLSv1.2",
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "CloudFrontToS3S3Bucket9CE6AB04",
+                  "RegionalDomainName",
                 ],
               },
-              "DomainName": Object {
-                "Fn::Select": Array [
-                  0,
-                  Object {
-                    "Fn::Split": Array [
-                      "/",
+              "Id": "LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
                       Object {
-                        "Fn::Select": Array [
-                          1,
-                          Object {
-                            "Fn::Split": Array [
-                              "://",
-                              Object {
-                                "Fn::GetAtt": Array [
-                                  "CloudFrontToMediaStoreMediaStoreContainer2EAAC53A",
-                                  "Endpoint",
-                                ],
-                              },
-                            ],
-                          },
-                        ],
+                        "Ref": "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F",
                       },
                     ],
-                  },
-                ],
-              },
-              "Id": "LiveStreamingCloudFrontToMediaStoreCloudFrontDistributionOrigin1A3A57054",
-              "OriginCustomHeaders": Array [
-                Object {
-                  "HeaderName": "User-Agent",
-                  "HeaderValue": Object {
-                    "Ref": "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3",
-                  },
+                  ],
                 },
-              ],
+              },
             },
           ],
         },
       },
       "Type": "AWS::CloudFront::Distribution",
     },
-    "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3": Object {
+    "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F": Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "access-identity-",
-                Object {
-                  "Ref": "AWS::Region",
-                },
-                "-",
-                Object {
-                  "Ref": "AWS::StackName",
-                },
-              ],
-            ],
-          },
+          "Comment": "Identity for LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
-    "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B": Object {
+    "CloudFrontToS3CloudfrontLoggingBucket8350BE9B": Object {
       "DeletionPolicy": "Retain",
       "Metadata": Object {
         "cfn_nag": Object {
@@ -584,10 +541,10 @@ Object {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "CloudFrontToMediaStoreCloudfrontLoggingBucketPolicy9AB02183": Object {
+    "CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9": Object {
       "Properties": Object {
         "Bucket": Object {
-          "Ref": "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+          "Ref": "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
         },
         "PolicyDocument": Object {
           "Statement": Array [
@@ -609,7 +566,7 @@ Object {
                     Array [
                       Object {
                         "Fn::GetAtt": Array [
-                          "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                          "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
                           "Arn",
                         ],
                       },
@@ -619,7 +576,7 @@ Object {
                 },
                 Object {
                   "Fn::GetAtt": Array [
-                    "CloudFrontToMediaStoreCloudfrontLoggingBucketDF6F6E4B",
+                    "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
                     "Arn",
                   ],
                 },
@@ -632,102 +589,221 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "CloudFrontToMediaStoreCloudfrontOriginRequestPolicyE5B13E44": Object {
-      "Properties": Object {
-        "OriginRequestPolicyConfig": Object {
-          "Comment": "Policy for Constructs CloudFrontDistributionForMediaStore",
-          "CookiesConfig": Object {
-            "CookieBehavior": "none",
-          },
-          "HeadersConfig": Object {
-            "HeaderBehavior": "whitelist",
-            "Headers": Array [
-              "Access-Control-Allow-Origin",
-              "Access-Control-Request-Method",
-              "Access-Control-Request-Header",
-              "Origin",
-            ],
-          },
-          "Name": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Ref": "AWS::StackName",
-                },
-                "-",
-                Object {
-                  "Ref": "AWS::Region",
-                },
-                "-CloudFrontDistributionForMediaStore",
-              ],
-            ],
-          },
-          "QueryStringsConfig": Object {
-            "QueryStringBehavior": "all",
-          },
-        },
-      },
-      "Type": "AWS::CloudFront::OriginRequestPolicy",
-    },
-    "CloudFrontToMediaStoreMediaStoreContainer2EAAC53A": Object {
+    "CloudFrontToS3S3Bucket9CE6AB04": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
-        "AccessLoggingEnabled": true,
-        "ContainerName": Object {
-          "Ref": "AWS::StackName",
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
         },
-        "CorsPolicy": Array [
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "GLACIER",
+                  "TransitionInDays": 90,
+                },
+              ],
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "LoggingConfiguration": Object {
+          "DestinationBucketName": Object {
+            "Ref": "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+          },
+        },
+        "MetricsConfigurations": Array [
           Object {
-            "AllowedHeaders": Array [
-              "*",
-            ],
-            "AllowedMethods": Array [
-              "GET",
-            ],
-            "AllowedOrigins": Array [
-              "*",
-            ],
-            "ExposeHeaders": Array [
-              "*",
-            ],
-            "MaxAgeSeconds": 3000,
+            "Id": "EntireBucket",
           },
         ],
-        "LifecyclePolicy": "{\\"rules\\":[{\\"definition\\":{\\"path\\":[{\\"wildcard\\":\\"stream/*.ts\\"}],\\"seconds_since_create\\":[{\\"numeric\\":[\\">\\",300]}]},\\"action\\":\\"EXPIRE\\"}]}",
-        "MetricPolicy": Object {
-          "ContainerLevelMetrics": "ENABLED",
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
         },
-        "Policy": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "{\\"Version\\":\\"2012-10-17\\",\\"Statement\\":[{\\"Sid\\":\\"MediaStoreDefaultPolicy\\",\\"Effect\\":\\"Allow\\",\\"Principal\\":\\"*\\",\\"Action\\":[\\"mediastore:GetObject\\",\\"mediastore:DescribeObject\\"],\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":mediastore:",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ":",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":container/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "/*\\",\\"Condition\\":{\\"StringEquals\\":{\\"aws:UserAgent\\":\\"",
-              Object {
-                "Ref": "CloudFrontToMediaStoreCloudFrontOriginAccessIdentityD026F5B3",
-              },
-              "\\"},\\"Bool\\":{\\"aws:SecureTransport\\":\\"true\\"}}}]}",
-            ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CloudFrontToS3S3BucketPolicy2495300D": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "F16",
+              "reason": "Public website bucket policy requires a wildcard principal",
+            },
           ],
         },
       },
-      "Type": "AWS::MediaStore::Container",
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "CloudFrontToS3S3Bucket9CE6AB04",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "CloudFrontToS3S3Bucket9CE6AB04",
+                    "Arn",
+                  ],
+                },
+              ],
+              "Sid": "HttpsOnly",
+            },
+            Object {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "CloudFrontToS3S3Bucket9CE6AB04",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "CloudFrontToS3S3LoggingBucketEF5CD8B2": Object {
+      "DeletionPolicy": "Retain",
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W35",
+              "reason": "This S3 bucket is used as the access logging bucket for another bucket",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CloudFrontToS3S3LoggingBucketPolicy360F3875": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+                    "Arn",
+                  ],
+                },
+              ],
+              "Sid": "HttpsOnly",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "CustomResource8CDCD7A7": Object {
       "DependsOn": Array [
@@ -755,7 +831,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0aS3BucketF223456B",
+            "Ref": "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3Bucket4EEC6A35",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -768,7 +844,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0aS3VersionKey1539E2AF",
+                          "Ref": "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3VersionKey9A0AA1FE",
                         },
                       ],
                     },
@@ -781,7 +857,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8515c038c02f8d832df0075802442a82518212476f50e6512722486ea7f5cc0aS3VersionKey1539E2AF",
+                          "Ref": "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3VersionKey9A0AA1FE",
                         },
                       ],
                     },
@@ -928,115 +1004,18 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "Dashboard9E4231ED": Object {
-      "Properties": Object {
-        "DashboardBody": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "{\\"widgets\\":[{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"\\\\nThis dashboard monitors the CloudWatch Logs for the MediaStore container and shows data points for                     both ingress and egress operations while the live stream is running. This dashboard monitors the CloudWatch                     Logs for the MediaStore container and shows data points for both ingress and egress operations while the live stream is running.                     An IAM Role is required to allow MediaStore to write to CloudWatch Logs. If you do not see any data points on this dashboard, please follow                     [these instructions to create the Role](https://docs.aws.amazon.com/mediastore/latest/ug/monitoring-cloudwatch-permissions.html).\\\\n\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingress Transaction Per Minute\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | fields @message\\\\n| filter (Path like \\\\\\"/stream/index\\\\\\") and (Operation=\\\\\\"PutObject\\\\\\")\\\\n| stats count(*) as TPM by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Egress Transaction Per Minute\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | fields @message\\\\n| filter (Path like \\\\\\"/stream/index\\\\\\") and (Operation=\\\\\\"GetObject\\\\\\")\\\\n| stats count(*) as TPM by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingress PutObject Latencies (Successful Requests)\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter HTTPStatus like /2\\\\\\\\d{2}/ and Operation=\\\\\\"PutObject\\\\\\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":8,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Egress GetObject Latencies (Successful Requests)\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter HTTPStatus like /2\\\\\\\\d{2}/ and Operation=\\\\\\"GetObject\\\\\\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)\\",\\"stacked\\":false}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Ingress 2xx Status Count by Operation\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter (Path like \\\\\\"/stream/index\\\\\\") | filter HTTPStatus like /2\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"PutObject\\\\\\" or Operation=\\\\\\"DeleteObject\\\\\\"\\\\n| stats count() as '2xx Count' by Operation | sort '2xx Count' desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Egress 2xx Status Count by Operation\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter (Path like \\\\\\"/stream/index\\\\\\") | filter HTTPStatus like /2\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"GetObject\\\\\\" \\\\n| stats count() as '2xx Count' by Operation | sort '2xx Count' desc\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Ingress 4xx Status Count\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /4\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"PutObject\\\\\\"\\\\n| stats count() as '4xx Count' by Operation\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Ingress 5xx Status Count\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /5\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"PutObject\\\\\\"\\\\n| stats count() as '5xx Count' by Operation\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Egress 4xx Status Count\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /4\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"GetObject\\\\\\"\\\\n| stats count() as '4xx Count' by Operation\\"}},{\\"type\\":\\"log\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":20,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Egress 5xx Status Count\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"query\\":\\"SOURCE '/aws/mediastore/",
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "' | filter (Path like \\\\\\"/stream/index\\\\\\")\\\\n| filter HTTPStatus like /5\\\\\\\\d{2}/ \\\\n| filter Operation = \\\\\\"GetObject\\\\\\"\\\\n| stats count() as '5xx Count' by Operation\\"}}]}",
-            ],
-          ],
-        },
-        "DashboardName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "-",
-              Object {
-                "Ref": "AWS::Region",
-              },
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::CloudWatch::Dashboard",
-    },
     "MediaLiveChannel": Object {
       "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F",
+        "CloudFrontToS3CloudFrontDistribution241D9866",
+        "CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9",
+        "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
+        "CloudFrontToS3S3BucketPolicy2495300D",
+        "CloudFrontToS3S3Bucket9CE6AB04",
+        "CloudFrontToS3S3LoggingBucketPolicy360F3875",
+        "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+      ],
       "Properties": Object {
         "Codec": "AVC",
         "EncodingProfile": Object {
@@ -1048,17 +1027,14 @@ Object {
             "Id",
           ],
         },
-        "MediaStoreEndpoint": Object {
-          "Fn::GetAtt": Array [
-            "CloudFrontToMediaStoreMediaStoreContainer2EAAC53A",
-            "Endpoint",
-          ],
-        },
         "Role": Object {
           "Fn::GetAtt": Array [
             "MediaLiveRole1149D189",
             "Arn",
           ],
+        },
+        "S3Bucket": Object {
+          "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
         },
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
@@ -1078,9 +1054,6 @@ Object {
     },
     "MediaLiveChannelStart": Object {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "CloudFrontToMediaStoreCloudFrontDistribution36D55136",
-      ],
       "Properties": Object {
         "ChannelId": Object {
           "Fn::GetAtt": Array [
@@ -1171,30 +1144,28 @@ Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "mediastore:DeleteObject",
-                "mediastore:DescribeObject",
-                "mediastore:GetObject",
-                "mediastore:ListItems",
-                "mediastore:PutObject",
+                "s3:ListBucket",
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject",
               ],
+              "Condition": Object {
+                "StringEquals": Object {
+                  "s3:ResourceAccount": Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                },
+              },
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::Join": Array [
                   "",
                   Array [
-                    "arn:",
+                    "arn:aws:s3:::",
                     Object {
-                      "Ref": "AWS::Partition",
+                      "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
                     },
-                    ":mediastore:",
-                    Object {
-                      "Ref": "AWS::Region",
-                    },
-                    ":",
-                    Object {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":*",
+                    "/*",
                   ],
                 ],
               },

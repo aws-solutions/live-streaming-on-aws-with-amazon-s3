@@ -14,11 +14,12 @@
 import * as cdk from '@aws-cdk/core';
 import * as iam from '@aws-cdk/aws-iam';
 import * as lambda from '@aws-cdk/aws-lambda';
-import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
+import * as s3 from '@aws-cdk/aws-s3';
 
 //Solution construct
-import { CloudFrontToMediaStore } from '@aws-solutions-constructs/aws-cloudfront-mediastore';
+import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 import { CachePolicy } from '@aws-cdk/aws-cloudfront';
+
 
 export class LiveStreaming extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -26,13 +27,13 @@ export class LiveStreaming extends cdk.Stack {
         /**
          * CloudFormation Template Descrption
          */
-        this.templateOptions.description = '(SO0109) Live Streaming on AWS with MediaStore Solution %%VERSION%%';
+        this.templateOptions.description = '(SO0109) Live Streaming on AWS with Amazon S3 Solution %%VERSION%%';
         /**
          * Cfn Parameters
          */
         const inputType = new cdk.CfnParameter(this, 'InputType', {
             type: 'String',
-            description: 'Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/appendix-a.html.',
+            description: 'Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-amazon-s3/appendix-a.html.',
             allowedValues: ['RTP_PUSH', 'RTMP_PUSH', 'URL_PULL', 'INPUT_DEVICE'],
             default: 'URL_PULL'
         });
@@ -139,11 +140,9 @@ export class LiveStreaming extends cdk.Stack {
             }
         });
         /**
-         * AWS Solutions Construct. Creates a mediastore container frontend by Amazon CloudFront.
+         * AWS Solutions Construct. Creates a S3 bucket frontend by Amazon CloudFront.
          * Construct also includes a logs bucket for the CloudFront distribution and a CloudFront
-         * OriginAccessIdentity which is used to restrict access to MediaStore from CloudFront.
-         * Disabling the default settings for security headers and update the lifecycle policy to delete expired
-         * .ts segments after 5 minutes.
+         * OriginAccessIdentity which is used to restrict access to S3 from CloudFront.
          */
         const cachePolicy = new CachePolicy(this, 'CachePolicy', {
             headerBehavior: {
@@ -152,7 +151,7 @@ export class LiveStreaming extends cdk.Stack {
             }
         });
 
-        const distibution = new CloudFrontToMediaStore(this, 'CloudFrontToMediaStore', {
+        const distibution = new CloudFrontToS3(this, 'CloudFrontToS3', {
             cloudFrontDistributionProps: {
               defaultBehavior: {
                 cachePolicy
@@ -163,17 +162,11 @@ export class LiveStreaming extends cdk.Stack {
             },
             insertHttpSecurityHeaders: false
         });
-        distibution.mediaStoreContainer.lifecyclePolicy = JSON.stringify({
-            rules: [
-                {
-                    definition: {
-                        path: [{ wildcard: 'stream/*.ts' }],
-                        seconds_since_create: [{ numeric: ['>', 300] }]
-                    },
-                    action: 'EXPIRE'
-                }
-            ]
-        });
+
+        const bucketMetrics: s3.BucketMetrics = {
+            id: 'EntireBucket'
+        };
+        distibution.s3Bucket?.addMetric(bucketMetrics);
 
         /**
          * IAM Roles
@@ -184,14 +177,18 @@ export class LiveStreaming extends cdk.Stack {
         const mediaLivePolicy = new iam.Policy(this, 'mediaLivePolicy', {
             statements: [
                 new iam.PolicyStatement({
-                    resources: [`arn:${cdk.Aws.PARTITION}:mediastore:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:*`],
+                    resources: [`arn:aws:s3:::${distibution.s3Bucket?.bucketName}/*`],
                     actions: [
-                        'mediastore:DeleteObject',
-                        'mediastore:DescribeObject',
-                        'mediastore:GetObject',
-                        'mediastore:ListItems',
-                        'mediastore:PutObject'
-                    ]
+                        's3:ListBucket',
+                        's3:PutObject',
+                        's3:GetObject',
+                        's3:DeleteObject'
+                    ],
+                    conditions: {
+                        StringEquals: {
+                            's3:ResourceAccount': `${cdk.Aws.ACCOUNT_ID}`
+                        }
+                    }
                 }),
                 new iam.PolicyStatement({
                     resources: [`arn:${cdk.Aws.PARTITION}:ssm:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:parameter/*`],
@@ -234,6 +231,7 @@ export class LiveStreaming extends cdk.Stack {
                 }),
             ]
         });
+
         mediaLivePolicy.attachToRole(mediaLiveRole);
         /**
          * Custom Resource, Role and Policy.
@@ -321,9 +319,12 @@ export class LiveStreaming extends cdk.Stack {
                 Role: mediaLiveRole.roleArn,
                 InputId: mediaLiveInput.getAttString('Id'),
                 Type: inputType.valueAsString,
-                MediaStoreEndpoint: distibution.mediaStoreContainer.attrEndpoint
+                S3Bucket: distibution.s3Bucket?.bucketName
             }
         });
+        // Create the mediaLiveChannel after S3 bucket and CloudFront distribution is created so we know the S3 name
+        mediaLiveChannel.node.addDependency(distibution);
+
         /**
          * custom resource, this will configure and deploy a mediaLive Channel
          */
@@ -334,8 +335,6 @@ export class LiveStreaming extends cdk.Stack {
                 ChannelStart: channelStart.valueAsString
             }
         });
-        startChannel.node.addDependency(distibution.cloudFrontWebDistribution);
-
         /**
          * custom resource, this will configure and deploy a mediaLive Channel
          */
@@ -358,119 +357,7 @@ export class LiveStreaming extends cdk.Stack {
                 SendAnonymousMetric: cdk.Fn.findInMap('AnonymousData', 'SendAnonymousData', 'Data')
             }
         });
-        /**
-         * CloudWatch Dashboard for MediaStore
-         */
-        const dashboard = new cloudwatch.Dashboard(this, 'Dashboard', {
-            dashboardName: `${cdk.Aws.STACK_NAME}-${cdk.Aws.REGION}`,
-        });
-        dashboard.addWidgets(new cloudwatch.TextWidget({
-            markdown: '\nThis dashboard monitors the CloudWatch Logs for the MediaStore container and shows data points for \
-                    both ingress and egress operations while the live stream is running. This dashboard monitors the CloudWatch \
-                    Logs for the MediaStore container and shows data points for both ingress and egress operations while the live stream is running. \
-                    An IAM Role is required to allow MediaStore to write to CloudWatch Logs. If you do not see any data points on this dashboard, please follow \
-                    [these instructions to create the Role](https://docs.aws.amazon.com/mediastore/latest/ug/monitoring-cloudwatch-permissions.html).\n',
-            width: 24,
-            height: 2,
-        }));
-        dashboard.addWidgets(
-            new cloudwatch.LogQueryWidget({
-                title: "Ingress Transaction Per Minute",
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `fields @message\n| filter (Path like \"/stream/index\") and (Operation=\"PutObject\")\n| stats count(*) as TPM by bin(1m)`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.LINE,
-                width: 12,
-                height: 6
-            }),
-            new cloudwatch.LogQueryWidget({
-                title: "Egress Transaction Per Minute",
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `fields @message\n| filter (Path like \"/stream/index\") and (Operation=\"GetObject\")\n| stats count(*) as TPM by bin(1m)`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.LINE,
-                width: 12,
-                height: 6
-            })
-        );
-        dashboard.addWidgets(
-            new cloudwatch.LogQueryWidget({
-                title: 'Ingress PutObject Latencies (Successful Requests)',
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter HTTPStatus like /2\\d{2}/ and Operation=\"PutObject\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.LINE,
-                width: 12,
-                height: 6
-            }),
-            new cloudwatch.LogQueryWidget({
-                title: "Egress GetObject Latencies (Successful Requests)",
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter HTTPStatus like /2\\d{2}/ and Operation=\"GetObject\" | stats avg(TurnAroundTime), avg(TotalTime), percentile(TurnAroundTime, 99), percentile(TotalTime, 99) by bin(1m)`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.LINE,
-                width: 12,
-                height: 6
-            })
-        );
-        dashboard.addWidgets(
-            new cloudwatch.LogQueryWidget({
-                title: 'Ingress 2xx Status Count by Operation',
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter (Path like \"/stream/index\") | filter HTTPStatus like /2\\d{2}/ \n| filter Operation = \"PutObject\" or Operation=\"DeleteObject\"\n| stats count() as '2xx Count' by Operation | sort '2xx Count' desc`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.TABLE,
-                width: 12,
-                height: 6
-            }),
-            new cloudwatch.LogQueryWidget({
-                title: "Egress 2xx Status Count by Operation",
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter (Path like \"/stream/index\") | filter HTTPStatus like /2\\d{2}/ \n| filter Operation = \"GetObject\" \n| stats count() as '2xx Count' by Operation | sort '2xx Count' desc`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.TABLE,
-                width: 12,
-                height: 6
-            })
-        );
-        dashboard.addWidgets(
-            new cloudwatch.LogQueryWidget({
-                title: 'Ingress 4xx Status Count',
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter (Path like \"/stream/index\")\n| filter HTTPStatus like /4\\d{2}/ \n| filter Operation = \"PutObject\"\n| stats count() as '4xx Count' by Operation`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.TABLE,
-                width: 6,
-                height: 6
-            }),
-            new cloudwatch.LogQueryWidget({
-                title: 'Ingress 5xx Status Count',
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter (Path like \"/stream/index\")\n| filter HTTPStatus like /5\\d{2}/ \n| filter Operation = \"PutObject\"\n| stats count() as '5xx Count' by Operation`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.TABLE,
-                width: 6,
-                height: 6
-            }),
-            new cloudwatch.LogQueryWidget({
-                title: 'Egress 4xx Status Count',
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter (Path like \"/stream/index\")\n| filter HTTPStatus like /4\\d{2}/ \n| filter Operation = \"GetObject\"\n| stats count() as '4xx Count' by Operation`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.TABLE,
-                width: 6,
-                height: 6
-            }),
-            new cloudwatch.LogQueryWidget({
-                title: 'Egress 5xx Status Count',
-                logGroupNames: [`/aws/mediastore/${cdk.Aws.STACK_NAME}`],
-                queryString: `filter (Path like \"/stream/index\")\n| filter HTTPStatus like /5\\d{2}/ \n| filter Operation = \"GetObject\"\n| stats count() as '5xx Count' by Operation`,
-                region: `${cdk.Aws.REGION}`,
-                view: cloudwatch.LogQueryVisualizationType.TABLE,
-                width: 6,
-                height: 6
-            })
-        );
+
         /**
          * Outputs
          */
@@ -484,15 +371,15 @@ export class LiveStreaming extends cdk.Stack {
             description: 'MediaLive Channel',
             exportName: `${cdk.Aws.STACK_NAME}-MediaLiveConsole`
         });
-        new cdk.CfnOutput(this, 'MediaStoreConsole', {
-            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/mediastore/home/containers/`,
-            description: 'MediaStore Container',
-            exportName: `${cdk.Aws.STACK_NAME}-MediaStoreConsole`
+        new cdk.CfnOutput(this, 'LiveStreamBucket', {
+            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/s3/buckets/${distibution.s3Bucket?.bucketName}?region=${cdk.Aws.REGION}`,
+            description: 'Live Stream Destination Bucket',
+            exportName: `${cdk.Aws.STACK_NAME}-LiveStreamBucket`
         });
-        new cdk.CfnOutput(this, 'CloudWatchDashboard', {
-            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${cdk.Aws.REGION}#dashboards:name=${cdk.Aws.STACK_NAME}-${cdk.Aws.REGION}`,
-            description: 'CloudWatch Dashboard for MediaStore Ingress and Egress',
-            exportName: `${cdk.Aws.STACK_NAME}-CloudWatchDashboard`
+        new cdk.CfnOutput(this, 'BucketMetrics', {
+            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/s3/bucket/${distibution.s3Bucket?.bucketName}/metrics/bucket_metrics?region=${cdk.Aws.REGION}&tab=request&period=1h`,
+            description: 'Bucket Request Metrics',
+            exportName: `${cdk.Aws.STACK_NAME}-BucketMetrics`
         });
         new cdk.CfnOutput(this, 'MediaLivePushEndpoint', {
             value: mediaLiveInput.getAttString('EndPoint'),

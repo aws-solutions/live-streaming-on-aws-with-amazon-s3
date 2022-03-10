@@ -1,14 +1,12 @@
-# Live Streaming on AWS with MediaStore
+# Live Streaming on AWS with Amazon S3
 
-Live streaming on AWS with MediaStore automatically configures AWS Elemental MediaLive, AWS Elemental MediaStore and Amazon CloudFront to ingest, encode, package and deliver a single source live stream through the AWS Cloud. The Solution provides 3 Encoding profiles to support 1080p through 288p HTTP live streaming (HLS) outputs and an Amazon CloudFront Dashboard to monitor the ingress and egress requests to MediaStore. For more details see the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/). 
+Live streaming on AWS with Amazon S3 automatically configures AWS Elemental MediaLive, Amazon S3 and Amazon CloudFront to ingest, encode, package and deliver a single source live stream through the AWS Cloud. The Solution provides 3 Encoding profiles to support 1080p through 288p HTTP live streaming (HLS) outputs. For more details see the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/). 
 
-The solution was developed using the [AWS Cloud Development Kit]() and also leverages a AWS Solutions Construct [CloudFrontToMediaStore](tbc)
+The solution was developed using the [AWS Cloud Development Kit]() and also leverages a AWS Solutions Construct [CloudFrontToS3](https://docs.aws.amazon.com/solutions/latest/constructs/aws-cloudfront-s3.html)
 
 ## On this Page
 - [Architecture Overview](#architecture-overview)
 - [Encoding Profiles](#encoding-profiles)
-- [CloudWatch Dashboard](#cloudwatch-dashboard)
-- [Requirements](#requirements)
 - [Deployment](#deployment)
 - [Creating a custom Build](#creating-a-custom-build)
 - [License](#license)
@@ -17,7 +15,7 @@ The solution was developed using the [AWS Cloud Development Kit]() and also leve
 ![Architecture](architecture.png)
 
 ## Input Options
-The solution supports RTP Push, RTMP push, HLS and [AWS Elemental Link](https://aws.amazon.com/medialive/features/link/) input types. For more detialed instructions see the Implementation Guid on the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/). 
+The solution supports RTP Push, RTMP push, HLS and [AWS Elemental Link](https://aws.amazon.com/medialive/features/link/) input types. For more detialed instructions see the implementation guide on the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/). 
 
 ## Encoding Profiles:
 
@@ -25,24 +23,9 @@ The solution supports RTP Push, RTMP push, HLS and [AWS Elemental Link](https://
 * HD-720p profile: 1280x720, 960x540, 768x432, 640x360, 512x288
 * SD-540p profile:  960x540, 768x432, 640x360, 512x288
 
-## CloudWatch Dashboard
-The solution includes an Amazon CloudWatch Dashboard that is configured to monitor the following MediaStore data points captured in Amazon CloudWatch Logs:
-
-* Ingress TPM (Transaction Per Minute)
-* Egress TPM (Transaction Per Minute)
-* Put Object Latencies (Successful Requests)
-* Get Object Latencies (Successful Requests)
-* Ingress 2xx Status Count by Operation
-* Ingress 4xx Status Count by Operation
-* Ingress 5xx Status Count by Operation
-* Egress 2xx Status Count by Operation
-* Egress 4xx Status Count by Operation
-* Egress 5xx Status Count by Operation
 
 
 
-## Requirements:
-Before you launch the solution, you must create a MediaStore IAM Role and associated policy to allow MediaStore access to Amazon CloudWatch. The solution will launch successfully but without this Role the Amazon CloudWatch Dashboard deployed as part of the solution will not work. This is a one-time requirement, once created the role will authorize logging for all MediaStore Containers (if enabled). For details please see the [MediaStore documentation](https://docs.aws.amazon.com/mediastore/latest/ug/incident-response.html)
 
 ## Deployment
 The solution can be deployed through the CloudFormation template available on the [solution home page](https://aws.amazon.com/solutions/live-streaming-on-aws/).
@@ -95,7 +78,7 @@ aws s3 mb s3://my-bucket-us-east-1
 Build the distributable:
 ```
 chmod +x ./build-s3-dist.sh
-./build-s3-dist.sh <my-bucket> live-streaming-on-aws-with-mediastore <version>
+./build-s3-dist.sh <my-bucket> live-streaming-on-aws-with-amazon-s3 <version>
 ```
 
 > **Notes**: The _build-s3-dist_ script expects the bucket name as one of its parameters. This value should not have the region suffix (remove the -us-east-1)
@@ -107,12 +90,12 @@ aws s3api head-bucket --bucket my-bucket-us-east-1 --expected-bucket-owner YOUR-
 
 Deploy the distributable to the Amazon S3 bucket in your account:
 ```
-aws s3 sync ./regional-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-mediastore/<version>/ 
-aws s3 sync ./global-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-mediastore/<version>/ 
+aws s3 sync ./regional-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-amazon-s3/<version>/ 
+aws s3 sync ./global-s3-assets/ s3://my-bucket-us-east-1/live-streaming-on-aws-with-amazon-s3/<version>/ 
 ```
 
 ### 5. Launch the CloudFormation template.
-* Get the link of the live-streaming-on-aws-with-mediastore.template uploaded to your Amazon S3 bucket.
+* Get the link of the live-streaming-on-aws-with-amazon-s3.template uploaded to your Amazon S3 bucket.
 * Deploy the solution.
 
 
@@ -129,4 +112,5 @@ When deploying this solution you may have a DevOps operator IAM user that deploy
 
 This solution collects anonymous operational metrics to help AWS improve the
 quality of features of the solution. For more information, including how to disable
-this capability, please see the [implementation guide](_https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-mediastore/collection-of-operational-metrics.html_). 
+this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-amazon-s3/welcome.html). 
+

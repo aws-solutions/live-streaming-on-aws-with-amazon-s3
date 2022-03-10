@@ -65,7 +65,6 @@ const config = {
   InputId: '1357',
   EncodingProfile: 'HD-1080p',
   Role: 'arn:aws:iam::12345:role/test',
-  MediaStoreEndpoint: 'https://mediastore',
   ChannelId:'2468'
 };
 const InputId = '2468';

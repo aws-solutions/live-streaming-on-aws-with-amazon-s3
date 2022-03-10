@@ -245,7 +245,7 @@ const deleteInput = async (InputId) => {
  * @param {string} config.Codec encoding codec option, default is AVC.
  * @param {string} config.Role  the MediaLive IAM Role associated with the channel.
  * @param {string} config.InputId  the ID of the medialive input to attach to the channel.
- * @param {string} config.MediaStoreEndpoint the mediastore endpoint to use as the output destination
+ * @param {string} config.S3Bucket the S3 bucket to use as the output destination
  * @param {string} config.SoltionId used to tag the medialive channel
  */
 const createChannel = async (config) => {
@@ -265,7 +265,7 @@ const createChannel = async (config) => {
             Destinations: [{
                 Id: "destination1",
                 Settings: [{
-                        Url: config.MediaStoreEndpoint.replace('https','mediastoressl')+'/stream/index'
+                        Url: 's3ssl://' + config.S3Bucket + '/stream/index'
                     }
                 ]
             }],

@@ -1,13 +1,13 @@
 {
-  "name": "live-streaming-on-aws-with-mediastore",
+  "name": "live-streaming-on-aws-with-amazon-s3",
   "version": "2.0.0",
-  "description": "cdk construct for the live streaming with  mediastore solution",
+  "description": "cdk construct for the live streaming with amazon s3 solution",
   "bin": {
     "live-stream": "bin/live-streaming.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/awslabs/live-streaming-on-aws-with-mediastore"
+    "url": "https://github.com/awslabs/live-streaming-on-aws-with-amazon-s3"
   },
   "author": "aws solution builders",
   "license": "Apache-2.0",
@@ -29,10 +29,11 @@
   },
   "dependencies": {
     "@aws-cdk/aws-cloudwatch": "1.125.0",
+    "@aws-cdk/aws-s3": "1.125.0",
     "@aws-cdk/aws-lambda": "1.125.0",
     "@aws-cdk/aws-medialive": "1.125.0",
     "@aws-cdk/core": "1.125.0",
-    "@aws-solutions-constructs/aws-cloudfront-mediastore": "1.125.0",
+    "@aws-solutions-constructs/aws-cloudfront-s3": "1.125.0",
     "source-map-support": "0.5.19"
   }
 }
