@@ -38,6 +38,7 @@ const  sendMetrics = async (config) => {
     data = await axios(params);
   }
   catch (err) {
+    console.error(err);
     throw err;
   }
   return data.status;

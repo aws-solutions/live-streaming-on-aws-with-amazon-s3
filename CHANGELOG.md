@@ -3,10 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [3.1.0] - 2022-9-1
+
+### New
+- SonarQube properties file: sonar-project.properties
+- Added cdk nag rule suppressions
+- Added SolutionId tag to resources
+- Added Service Catalog AppRegistry configuration and ApplicationInsights
+
+### Changed
+- Updated deployment/run-unit-tests.sh to generate unit test coverage reports
+- Updated deployment/build-s3-dist.sh to output cdk nag errors
+- Disabled versioning on buckets within the CloudFront to S3 construct
+
+### Contributors
+* @sandimciin
+* @eggoynes
 
 ## [3.0.0] - 2022-3-10
 
-### Added
+### New
 - Added Amazon S3 construct to replace AWS MediaStore for storing video segments.
 - Amazon S3 request metrics added, including first byte latency, and total latency of each request.
 

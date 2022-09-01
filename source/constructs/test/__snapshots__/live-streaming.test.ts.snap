@@ -2,490 +2,655 @@
 
 exports[`LiveStreaming Stack Test 1`] = `
 Object {
-  "Description": "(SO0109) Live Streaming on AWS with Amazon S3 Solution %%VERSION%%",
-  "Mappings": Object {
-    "AnonymousData": Object {
-      "SendAnonymousData": Object {
-        "Data": "Yes",
+  Description: (SO0109) Live Streaming on AWS with Amazon S3 Solution %%VERSION%%,
+  Mappings: Object {
+    AnonymousData: Object {
+      SendAnonymousData: Object {
+        Data: Yes,
       },
     },
   },
-  "Metadata": Object {
-    "AWS::CloudFormation::Interface": Object {
-      "ParameterGroups": Array [
+  Metadata: Object {
+    AWS::CloudFormation::Interface: Object {
+      ParameterGroups: Array [
         Object {
-          "Label": Object {
-            "default": "LIVE STREAM SOURCE",
+          Label: Object {
+            default: LIVE STREAM SOURCE,
           },
-          "Parameters": Array [
-            "InputType",
+          Parameters: Array [
+            InputType,
           ],
         },
         Object {
-          "Label": Object {
-            "default": "URL_PULL CONFIGURATION",
+          Label: Object {
+            default: URL_PULL CONFIGURATION,
           },
-          "Parameters": Array [
-            "PullUrl",
-            "PullUser",
-            "PullPass",
+          Parameters: Array [
+            PullUrl,
+            PullUser,
+            PullPass,
           ],
         },
         Object {
-          "Label": Object {
-            "default": "RTP_PUSH / RTMP_PUSH CONFIGURATION",
+          Label: Object {
+            default: RTP_PUSH / RTMP_PUSH CONFIGURATION,
           },
-          "Parameters": Array [
-            "InputCIDR",
+          Parameters: Array [
+            InputCIDR,
           ],
         },
         Object {
-          "Label": Object {
-            "default": "INPUT_DEVICE CONFIGURATION",
+          Label: Object {
+            default: INPUT_DEVICE CONFIGURATION,
           },
-          "Parameters": Array [
-            "InputDeviceId",
+          Parameters: Array [
+            InputDeviceId,
           ],
         },
         Object {
-          "Label": Object {
-            "default": "ENCODING OPTIONS",
+          Label: Object {
+            default: ENCODING OPTIONS,
           },
-          "Parameters": Array [
-            "EncodingProfile",
-            "ChannelStart",
+          Parameters: Array [
+            EncodingProfile,
+            ChannelStart,
           ],
         },
       ],
-      "ParameterLabels": Object {
-        "ChannelStart": Object {
-          "default": "Start MediaLive Channel",
+      ParameterLabels: Object {
+        ChannelStart: Object {
+          default: Start MediaLive Channel,
         },
-        "EncodingProfile": Object {
-          "default": "Encoding Profile",
+        EncodingProfile: Object {
+          default: Encoding Profile,
         },
-        "InputCIDR": Object {
-          "default": "Input Security Group CIDR Block (REQUIRED)",
+        InputCIDR: Object {
+          default: Input Security Group CIDR Block (REQUIRED),
         },
-        "InputDeviceId": Object {
-          "default": "Elemental Link Input Device ID",
+        InputDeviceId: Object {
+          default: Elemental Link Input Device ID,
         },
-        "InputType": Object {
-          "default": "Source Input Type",
+        InputType: Object {
+          default: Source Input Type,
         },
-        "PullUrl": Object {
-          "default": "Source URL (REQUIRED)",
+        PullUrl: Object {
+          default: Source URL (REQUIRED),
         },
-        "PullUser": Object {
-          "default": "Source Username (OPTIONAL)",
+        PullUser: Object {
+          default: Source Username (OPTIONAL),
         },
-        "pullPass": Object {
-          "default": "Source Password (REQUIRED)",
+        pullPass: Object {
+          default: Source Password (REQUIRED),
         },
       },
     },
   },
-  "Outputs": Object {
-    "BucketMetrics": Object {
-      "Description": "Bucket Request Metrics",
-      "Export": Object {
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
+  Outputs: Object {
+    AppRegistryConsole: Object {
+      Description: AppRegistry,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
             Array [
               Object {
-                "Ref": "AWS::StackName",
+                Ref: AWS::StackName,
               },
-              "-BucketMetrics",
+              -AppRegistry,
             ],
           ],
         },
       },
-      "Value": Object {
-        "Fn::Join": Array [
-          "",
+      Value: Object {
+        Fn::Join: Array [
+          ,
           Array [
-            "https://",
+            https://,
             Object {
-              "Ref": "AWS::Region",
+              Ref: AWS::Region,
             },
-            ".console.aws.amazon.com/s3/bucket/",
+            .console.aws.amazon.com/servicecatalog/home?#applications/,
             Object {
-              "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
-            },
-            "/metrics/bucket_metrics?region=",
-            Object {
-              "Ref": "AWS::Region",
-            },
-            "&tab=request&period=1h",
-          ],
-        ],
-      },
-    },
-    "LiveStreamBucket": Object {
-      "Description": "Live Stream Destination Bucket",
-      "Export": Object {
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "-LiveStreamBucket",
-            ],
-          ],
-        },
-      },
-      "Value": Object {
-        "Fn::Join": Array [
-          "",
-          Array [
-            "https://",
-            Object {
-              "Ref": "AWS::Region",
-            },
-            ".console.aws.amazon.com/s3/buckets/",
-            Object {
-              "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
-            },
-            "?region=",
-            Object {
-              "Ref": "AWS::Region",
-            },
-          ],
-        ],
-      },
-    },
-    "LiveStreamUrl": Object {
-      "Description": "CloudFront Live Stream URL",
-      "Export": Object {
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              Object {
-                "Ref": "AWS::StackName",
-              },
-              "-LiveStreamUrl",
-            ],
-          ],
-        },
-      },
-      "Value": Object {
-        "Fn::Join": Array [
-          "",
-          Array [
-            "https://",
-            Object {
-              "Fn::GetAtt": Array [
-                "CloudFrontToS3CloudFrontDistribution241D9866",
-                "DomainName",
+              Fn::GetAtt: Array [
+                AppRegistryApp5349BE86,
+                Id,
               ],
             },
-            "/stream/index.m3u8",
           ],
         ],
       },
     },
-    "MediaLiveConsole": Object {
-      "Description": "MediaLive Channel",
-      "Export": Object {
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
+    BucketMetrics: Object {
+      Description: Bucket Request Metrics,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
             Array [
               Object {
-                "Ref": "AWS::StackName",
+                Ref: AWS::StackName,
               },
-              "-MediaLiveConsole",
+              -BucketMetrics,
             ],
           ],
         },
       },
-      "Value": Object {
-        "Fn::Join": Array [
-          "",
+      Value: Object {
+        Fn::Join: Array [
+          ,
           Array [
-            "https://",
+            https://,
             Object {
-              "Ref": "AWS::Region",
+              Ref: AWS::Region,
             },
-            ".console.aws.amazon.com/medialive/home?region=",
+            .console.aws.amazon.com/s3/bucket/,
             Object {
-              "Ref": "AWS::Region",
+              Ref: CloudFrontToS3S3Bucket9CE6AB04,
             },
-            "#!/channels",
+            /metrics/bucket_metrics?region=,
+            Object {
+              Ref: AWS::Region,
+            },
+            &tab=request&period=1h,
           ],
         ],
       },
     },
-    "MediaLivePushEndpoint": Object {
-      "Description": "The MediaLive Input ingress endpoint for push input types",
-      "Export": Object {
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
+    LiveStreamBucket: Object {
+      Description: Live Stream Destination Bucket,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
             Array [
               Object {
-                "Ref": "AWS::StackName",
+                Ref: AWS::StackName,
               },
-              "-MediaLiveEndpoint",
+              -LiveStreamBucket,
             ],
           ],
         },
       },
-      "Value": Object {
-        "Fn::GetAtt": Array [
-          "MediaLiveInput",
-          "EndPoint",
+      Value: Object {
+        Fn::Join: Array [
+          ,
+          Array [
+            https://,
+            Object {
+              Ref: AWS::Region,
+            },
+            .console.aws.amazon.com/s3/buckets/,
+            Object {
+              Ref: CloudFrontToS3S3Bucket9CE6AB04,
+            },
+            ?region=,
+            Object {
+              Ref: AWS::Region,
+            },
+          ],
+        ],
+      },
+    },
+    LiveStreamUrl: Object {
+      Description: CloudFront Live Stream URL,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
+            Array [
+              Object {
+                Ref: AWS::StackName,
+              },
+              -LiveStreamUrl,
+            ],
+          ],
+        },
+      },
+      Value: Object {
+        Fn::Join: Array [
+          ,
+          Array [
+            https://,
+            Object {
+              Fn::GetAtt: Array [
+                CloudFrontToS3CloudFrontDistribution241D9866,
+                DomainName,
+              ],
+            },
+            /stream/index.m3u8,
+          ],
+        ],
+      },
+    },
+    MediaLiveChannelId: Object {
+      Description: MediaLive Channel Id,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
+            Array [
+              Object {
+                Ref: AWS::StackName,
+              },
+              -MediaLiveChannelId,
+            ],
+          ],
+        },
+      },
+      Value: Object {
+        Fn::GetAtt: Array [
+          MediaLiveChannel,
+          ChannelId,
+        ],
+      },
+    },
+    MediaLiveConsole: Object {
+      Description: MediaLive Channel,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
+            Array [
+              Object {
+                Ref: AWS::StackName,
+              },
+              -MediaLiveConsole,
+            ],
+          ],
+        },
+      },
+      Value: Object {
+        Fn::Join: Array [
+          ,
+          Array [
+            https://,
+            Object {
+              Ref: AWS::Region,
+            },
+            .console.aws.amazon.com/medialive/home?region=,
+            Object {
+              Ref: AWS::Region,
+            },
+            #!/channels,
+          ],
+        ],
+      },
+    },
+    MediaLivePushEndpoint: Object {
+      Description: The MediaLive Input ingress endpoint for push input types,
+      Export: Object {
+        Name: Object {
+          Fn::Join: Array [
+            ,
+            Array [
+              Object {
+                Ref: AWS::StackName,
+              },
+              -MediaLiveEndpoint,
+            ],
+          ],
+        },
+      },
+      Value: Object {
+        Fn::GetAtt: Array [
+          MediaLiveInput,
+          EndPoint,
         ],
       },
     },
   },
-  "Parameters": Object {
-    "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210ArtifactHash3B1AB7E6": Object {
-      "Description": "Artifact hash for asset \\"86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210\\"",
-      "Type": "String",
+  Parameters: Object {
+    AssetParameters[HASH REMOVED]: Object {
+      Description: Artifact hash for asset [HASH REMOVED],
+      Type: String,
     },
-    "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3Bucket4EEC6A35": Object {
-      "Description": "S3 bucket for asset \\"86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210\\"",
-      "Type": "String",
+    AssetParameters[HASH REMOVED]: Object {
+      Description: S3 bucket for asset [HASH REMOVED],
+      Type: String,
     },
-    "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3VersionKey9A0AA1FE": Object {
-      "Description": "S3 key for asset version \\"86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210\\"",
-      "Type": "String",
+    AssetParameters[HASH REMOVED]: Object {
+      Description: S3 key for asset [HASH REMOVED],
+      Type: String,
     },
-    "ChannelStart": Object {
-      "AllowedValues": Array [
-        "Yes",
-        "No",
+    ChannelStart: Object {
+      AllowedValues: Array [
+        Yes,
+        No,
       ],
-      "Default": "No",
-      "Description": "If your source is ready to stream select true, this wil start the MediaLive Channel as part of the deployment. If you select false you will need to manually start the MediaLive Channel when your source is ready.",
-      "Type": "String",
+      Default: No,
+      Description: If your source is ready to stream select true, this wil start the MediaLive Channel as part of the deployment. If you select false you will need to manually start the MediaLive Channel when your source is ready.,
+      Type: String,
     },
-    "EncodingProfile": Object {
-      "AllowedValues": Array [
-        "HD-1080p",
-        "HD-720p",
-        "SD-540p",
+    EncodingProfile: Object {
+      AllowedValues: Array [
+        HD-1080p,
+        HD-720p,
+        SD-540p,
       ],
-      "Default": "HD-720p",
-      "Description": "Select an encoding profile. HD 1080p [1920x1080, 1280x720, 960x540, 768x432, 640x360, 512x288] HD 720p [1280x720, 960x540, 768x432, 640x360, 512x288] SD 540p [960x540, 768x432, 640x360, 512x288]  See the implementation guide for details https://docs.aws.amazon.com/solutions/latest/live-streaming/considerations.html",
-      "Type": "String",
+      Default: HD-720p,
+      Description: Select an encoding profile. HD 1080p [1920x1080, 1280x720, 960x540, 768x432, 640x360, 512x288] HD 720p [1280x720, 960x540, 768x432, 640x360, 512x288] SD 540p [960x540, 768x432, 640x360, 512x288]  See the implementation guide for details https://docs.aws.amazon.com/solutions/latest/live-streaming/considerations.html,
+      Type: String,
     },
-    "InputCIDR": Object {
-      "Default": "",
-      "Description": "For RTP and RTMP PUSH input types ONLY, specify the CIDR Block for the MediaLive SecurityGroup. Input security group restricts access to the input and prevents unauthorized third parties from pushing content into a channel that is associated with that input.",
-      "Type": "String",
+    InputCIDR: Object {
+      Default: ,
+      Description: For RTP and RTMP PUSH input types ONLY, specify the CIDR Block for the MediaLive SecurityGroup. Input security group restricts access to the input and prevents unauthorized third parties from pushing content into a channel that is associated with that input.,
+      Type: String,
     },
-    "InputDeviceId": Object {
-      "Default": "",
-      "Description": "Specify the ID for your Elemental Link Input device (please note a Link device can only be attached to one input at a time)",
-      "Type": "String",
+    InputDeviceId: Object {
+      Default: ,
+      Description: Specify the ID for your Elemental Link Input device (please note a Link device can only be attached to one input at a time),
+      Type: String,
     },
-    "InputType": Object {
-      "AllowedValues": Array [
-        "RTP_PUSH",
-        "RTMP_PUSH",
-        "URL_PULL",
-        "INPUT_DEVICE",
+    InputType: Object {
+      AllowedValues: Array [
+        RTP_PUSH,
+        RTMP_PUSH,
+        URL_PULL,
+        INPUT_DEVICE,
       ],
-      "Default": "URL_PULL",
-      "Description": "Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-amazon-s3/appendix-a.html.",
-      "Type": "String",
+      Default: URL_PULL,
+      Description: Specify the input type for MediaLive (default parameters are for the demo video).  For details on setting up each input type, see https://docs.aws.amazon.com/solutions/latest/live-streaming-on-aws-with-amazon-s3/appendix-a.html.,
+      Type: String,
     },
-    "PullPass": Object {
-      "Default": "",
-      "Description": "For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the password",
-      "Type": "String",
+    PullPass: Object {
+      Default: ,
+      Description: For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the password,
+      Type: String,
     },
-    "PullUrl": Object {
-      "Default": "https://d15an60oaeed9r.cloudfront.net/live_stream_v2/sports_reel_with_markers.m3u8",
-      "Description": "For URL PULL input type ONLY, specify the primary source URL, this should be a HTTP or HTTPS link to the stream manifest file.",
-      "Type": "String",
+    PullUrl: Object {
+      Default: https://d15an60oaeed9r.cloudfront.net/live_stream_v2/sports_reel_with_markers.m3u8,
+      Description: For URL PULL input type ONLY, specify the primary source URL, this should be a HTTP or HTTPS link to the stream manifest file.,
+      Type: String,
     },
-    "PullUser": Object {
-      "Default": "",
-      "Description": "For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the username",
-      "Type": "String",
+    PullUser: Object {
+      Default: ,
+      Description: For URL PULL input type ONLY, if basic authentication is enabled on the source stream enter the username,
+      Type: String,
     },
   },
-  "Resources": Object {
-    "AnonymousMetric": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "ChannelStart": Object {
-          "Ref": "ChannelStart",
+  Resources: Object {
+    AnonymousMetric: Object {
+      DeletionPolicy: Delete,
+      Properties: Object {
+        ChannelStart: Object {
+          Ref: ChannelStart,
         },
-        "Cidr": Object {
-          "Ref": "InputCIDR",
+        Cidr: Object {
+          Ref: InputCIDR,
         },
-        "EncodingProfile": Object {
-          "Ref": "EncodingProfile",
+        EncodingProfile: Object {
+          Ref: EncodingProfile,
         },
-        "SendAnonymousMetric": Object {
-          "Fn::FindInMap": Array [
-            "AnonymousData",
-            "SendAnonymousData",
-            "Data",
+        SendAnonymousMetric: Object {
+          Fn::FindInMap: Array [
+            AnonymousData,
+            SendAnonymousData,
+            Data,
           ],
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "CustomResource8CDCD7A7",
-            "Arn",
+        ServiceToken: Object {
+          Fn::GetAtt: Array [
+            CustomResource8CDCD7A7,
+            Arn,
           ],
         },
-        "SolutionId": "SO0109",
-        "Type": Object {
-          "Ref": "InputType",
+        SolutionId: SO0109,
+        Type: Object {
+          Ref: InputType,
         },
-        "UUID": Object {
-          "Fn::GetAtt": Array [
-            "UUID",
-            "UUID",
+        UUID: Object {
+          Fn::GetAtt: Array [
+            UUID,
+            UUID,
           ],
         },
-        "Version": "%%VERSION%%",
+        Version: %%VERSION%%,
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
+      Type: AWS::CloudFormation::CustomResource,
+      UpdateReplacePolicy: Delete,
     },
-    "CachePolicy26D8A535": Object {
-      "Properties": Object {
-        "CachePolicyConfig": Object {
-          "DefaultTTL": 86400,
-          "MaxTTL": 31536000,
-          "MinTTL": 0,
-          "Name": Object {
-            "Fn::Join": Array [
-              "",
+    AppRegistryApp5349BE86: Object {
+      DependsOn: Array [
+        AppRegistryAttributeGroup7AF07446,
+      ],
+      Properties: Object {
+        Description: Service Catalog application to track and manage all your resources. The SolutionId is SO0109 and SolutionVersion is %%VERSION%%.,
+        Name: LiveStreamingOnAwsWithAmazonS3,
+        Tags: Object {
+          ApplicationType: AWS-Solutions,
+          SolutionDomain: MediaAndEntertainment,
+          SolutionId: SO0109,
+          SolutionName: Live Streaming on AWS with Amazon S3,
+          SolutionVersion: %%VERSION%%,
+        },
+      },
+      Type: AWS::ServiceCatalogAppRegistry::Application,
+    },
+    AppRegistryAppAttributeGroupAssociation73c027e3f10e9676CFD5: Object {
+      DependsOn: Array [
+        AppRegistryAttributeGroup7AF07446,
+      ],
+      Properties: Object {
+        Application: Object {
+          Fn::GetAtt: Array [
+            AppRegistryApp5349BE86,
+            Id,
+          ],
+        },
+        AttributeGroup: Object {
+          Fn::GetAtt: Array [
+            AppRegistryAttributeGroup7AF07446,
+            Id,
+          ],
+        },
+      },
+      Type: AWS::ServiceCatalogAppRegistry::AttributeGroupAssociation,
+    },
+    AppRegistryAppResourceAssociationbb30b2b6ffac2CF098B8: Object {
+      DependsOn: Array [
+        AppRegistryAttributeGroup7AF07446,
+      ],
+      Properties: Object {
+        Application: Object {
+          Fn::GetAtt: Array [
+            AppRegistryApp5349BE86,
+            Id,
+          ],
+        },
+        Resource: Object {
+          Ref: AWS::StackId,
+        },
+        ResourceType: CFN_STACK,
+      },
+      Type: AWS::ServiceCatalogAppRegistry::ResourceAssociation,
+    },
+    AppRegistryAttributeGroup7AF07446: Object {
+      Properties: Object {
+        Attributes: Object {
+          ApplicationType: AWS Solution,
+          Author: Media and Entertainment,
+          SolutionID: SO0109,
+          SolutionName: Live Streaming on AWS with Amazon S3,
+          Team: Media and Entertainment,
+          Version: %%VERSION%%,
+        },
+        Description: Live Streaming on AWS with Amazon S3,
+        Name: MediaAndEntertainmentSolutions,
+        Tags: Object {
+          SolutionId: SO0109,
+        },
+      },
+      Type: AWS::ServiceCatalogAppRegistry::AttributeGroup,
+    },
+    ApplicationInsightsApp: Object {
+      DependsOn: Array [
+        AppRegistryAppAttributeGroupAssociation73c027e3f10e9676CFD5,
+        AppRegistryApp5349BE86,
+        AppRegistryAppResourceAssociationbb30b2b6ffac2CF098B8,
+      ],
+      Properties: Object {
+        AutoConfigurationEnabled: true,
+        CWEMonitorEnabled: true,
+        OpsCenterEnabled: true,
+        ResourceGroupName: AWS_AppRegistry_Application-LiveStreamingOnAwsWithAmazonS3,
+        Tags: Array [
+          Object {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
+      },
+      Type: AWS::ApplicationInsights::Application,
+    },
+    CachePolicy26D8A535: Object {
+      Properties: Object {
+        CachePolicyConfig: Object {
+          DefaultTTL: 86400,
+          MaxTTL: 31536000,
+          MinTTL: 0,
+          Name: Object {
+            Fn::Join: Array [
+              ,
               Array [
-                "LiveStreamingCachePolicy36FCA70B-",
+                LiveStreamingCachePolicy36FCA70B-,
                 Object {
-                  "Ref": "AWS::Region",
+                  Ref: AWS::Region,
                 },
               ],
             ],
           },
-          "ParametersInCacheKeyAndForwardedToOrigin": Object {
-            "CookiesConfig": Object {
-              "CookieBehavior": "none",
+          ParametersInCacheKeyAndForwardedToOrigin: Object {
+            CookiesConfig: Object {
+              CookieBehavior: none,
             },
-            "EnableAcceptEncodingBrotli": false,
-            "EnableAcceptEncodingGzip": false,
-            "HeadersConfig": Object {
-              "HeaderBehavior": "whitelist",
-              "Headers": Array [
-                "Origin",
+            EnableAcceptEncodingBrotli: false,
+            EnableAcceptEncodingGzip: false,
+            HeadersConfig: Object {
+              HeaderBehavior: whitelist,
+              Headers: Array [
+                Origin,
               ],
             },
-            "QueryStringsConfig": Object {
-              "QueryStringBehavior": "none",
+            QueryStringsConfig: Object {
+              QueryStringBehavior: none,
             },
           },
         },
       },
-      "Type": "AWS::CloudFront::CachePolicy",
+      Type: AWS::CloudFront::CachePolicy,
     },
-    "CloudFrontToS3CloudFrontDistribution241D9866": Object {
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
+    CloudFrontToS3CloudFrontDistribution241D9866: Object {
+      Metadata: Object {
+        cdk_nag: Object {
+          rules_to_suppress: Array [
             Object {
-              "id": "W70",
-              "reason": "Since the distribution uses the CloudFront domain name, CloudFront automatically sets the security policy to TLSv1 regardless of the value of MinimumProtocolVersion",
+              id: AwsSolutions-CFR1,
+              reason: Use case does not warrant CloudFront Geo restriction,
+            },
+            Object {
+              id: AwsSolutions-CFR2,
+              reason: Use case does not warrant CloudFront integration with AWS WAF,
+            },
+            Object {
+              id: AwsSolutions-CFR4,
+              reason: CloudFront automatically sets the security policy to TLSv1 when the distribution uses the CloudFront domain name,
+            },
+          ],
+        },
+        cfn_nag: Object {
+          rules_to_suppress: Array [
+            Object {
+              id: W70,
+              reason: Since the distribution uses the CloudFront domain name, CloudFront automatically sets the security policy to TLSv1 regardless of the value of MinimumProtocolVersion,
             },
           ],
         },
       },
-      "Properties": Object {
-        "DistributionConfig": Object {
-          "CustomErrorResponses": Array [
+      Properties: Object {
+        DistributionConfig: Object {
+          CustomErrorResponses: Array [
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 400,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 400,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 403,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 403,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 404,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 404,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 405,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 405,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 414,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 414,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 416,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 416,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 500,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 500,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 501,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 501,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 502,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 502,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 503,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 503,
             },
             Object {
-              "ErrorCachingMinTTL": 1,
-              "ErrorCode": 504,
+              ErrorCachingMinTTL: 1,
+              ErrorCode: 504,
             },
           ],
-          "DefaultCacheBehavior": Object {
-            "CachePolicyId": Object {
-              "Ref": "CachePolicy26D8A535",
+          DefaultCacheBehavior: Object {
+            CachePolicyId: Object {
+              Ref: CachePolicy26D8A535,
             },
-            "Compress": true,
-            "TargetOriginId": "LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB",
-            "ViewerProtocolPolicy": "redirect-to-https",
+            Compress: true,
+            TargetOriginId: LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB,
+            ViewerProtocolPolicy: redirect-to-https,
           },
-          "DefaultRootObject": "index.html",
-          "Enabled": true,
-          "HttpVersion": "http2",
-          "IPV6Enabled": true,
-          "Logging": Object {
-            "Bucket": Object {
-              "Fn::GetAtt": Array [
-                "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
-                "RegionalDomainName",
+          DefaultRootObject: index.html,
+          Enabled: true,
+          HttpVersion: http2,
+          IPV6Enabled: true,
+          Logging: Object {
+            Bucket: Object {
+              Fn::GetAtt: Array [
+                CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+                RegionalDomainName,
               ],
             },
           },
-          "Origins": Array [
+          Origins: Array [
             Object {
-              "DomainName": Object {
-                "Fn::GetAtt": Array [
-                  "CloudFrontToS3S3Bucket9CE6AB04",
-                  "RegionalDomainName",
+              DomainName: Object {
+                Fn::GetAtt: Array [
+                  CloudFrontToS3S3Bucket9CE6AB04,
+                  RegionalDomainName,
                 ],
               },
-              "Id": "LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB",
-              "S3OriginConfig": Object {
-                "OriginAccessIdentity": Object {
-                  "Fn::Join": Array [
-                    "",
+              Id: LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB,
+              S3OriginConfig: Object {
+                OriginAccessIdentity: Object {
+                  Fn::Join: Array [
+                    ,
                     Array [
-                      "origin-access-identity/cloudfront/",
+                      origin-access-identity/cloudfront/,
                       Object {
-                        "Ref": "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F",
+                        Ref: CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F,
                       },
                     ],
                   ],
@@ -494,370 +659,388 @@ Object {
             },
           ],
         },
-      },
-      "Type": "AWS::CloudFront::Distribution",
-    },
-    "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F": Object {
-      "Properties": Object {
-        "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "CloudFrontToS3CloudfrontLoggingBucket8350BE9B": Object {
-      "DeletionPolicy": "Retain",
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
-            Object {
-              "id": "W35",
-              "reason": "This S3 bucket is used as the access logging bucket for CloudFront Distribution",
-            },
-          ],
-        },
-      },
-      "Properties": Object {
-        "AccessControl": "LogDeliveryWrite",
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
-            Object {
-              "ServerSideEncryptionByDefault": Object {
-                "SSEAlgorithm": "AES256",
-              },
-            },
-          ],
-        },
-        "PublicAccessBlockConfiguration": Object {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "VersioningConfiguration": Object {
-          "Status": "Enabled",
-        },
-      },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9": Object {
-      "Properties": Object {
-        "Bucket": Object {
-          "Ref": "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
-        },
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "*",
-              "Condition": Object {
-                "Bool": Object {
-                  "aws:SecureTransport": "false",
-                },
-              },
-              "Effect": "Deny",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
-                    "Arn",
-                  ],
-                },
-              ],
-              "Sid": "HttpsOnly",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::S3::BucketPolicy",
-    },
-    "CloudFrontToS3S3Bucket9CE6AB04": Object {
-      "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
-            Object {
-              "ServerSideEncryptionByDefault": Object {
-                "SSEAlgorithm": "AES256",
-              },
-            },
-          ],
-        },
-        "LifecycleConfiguration": Object {
-          "Rules": Array [
-            Object {
-              "NoncurrentVersionTransitions": Array [
-                Object {
-                  "StorageClass": "GLACIER",
-                  "TransitionInDays": 90,
-                },
-              ],
-              "Status": "Enabled",
-            },
-          ],
-        },
-        "LoggingConfiguration": Object {
-          "DestinationBucketName": Object {
-            "Ref": "CloudFrontToS3S3LoggingBucketEF5CD8B2",
-          },
-        },
-        "MetricsConfigurations": Array [
+        Tags: Array [
           Object {
-            "Id": "EntireBucket",
+            Key: SolutionId,
+            Value: SO0109,
           },
         ],
-        "PublicAccessBlockConfiguration": Object {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "VersioningConfiguration": Object {
-          "Status": "Enabled",
+      },
+      Type: AWS::CloudFront::Distribution,
+    },
+    CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F: Object {
+      Properties: Object {
+        CloudFrontOriginAccessIdentityConfig: Object {
+          Comment: Identity for LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB,
         },
       },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Retain",
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity,
     },
-    "CloudFrontToS3S3BucketPolicy2495300D": Object {
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
+    CloudFrontToS3CloudfrontLoggingBucket8350BE9B: Object {
+      DeletionPolicy: Retain,
+      Metadata: Object {
+        cdk_nag: Object {
+          rules_to_suppress: Array [
             Object {
-              "id": "F16",
-              "reason": "Public website bucket policy requires a wildcard principal",
+              id: AwsSolutions-S1,
+              reason: Used to store access logs for other buckets,
+            },
+          ],
+        },
+        cfn_nag: Object {
+          rules_to_suppress: Array [
+            Object {
+              id: W35,
+              reason: This S3 bucket is used as the access logging bucket for CloudFront Distribution,
             },
           ],
         },
       },
-      "Properties": Object {
-        "Bucket": Object {
-          "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
-        },
-        "PolicyDocument": Object {
-          "Statement": Array [
+      Properties: Object {
+        AccessControl: LogDeliveryWrite,
+        BucketEncryption: Object {
+          ServerSideEncryptionConfiguration: Array [
             Object {
-              "Action": "*",
-              "Condition": Object {
-                "Bool": Object {
-                  "aws:SecureTransport": "false",
+              ServerSideEncryptionByDefault: Object {
+                SSEAlgorithm: AES256,
+              },
+            },
+          ],
+        },
+        PublicAccessBlockConfiguration: Object {
+          BlockPublicAcls: true,
+          BlockPublicPolicy: true,
+          IgnorePublicAcls: true,
+          RestrictPublicBuckets: true,
+        },
+        Tags: Array [
+          Object {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
+      },
+      Type: AWS::S3::Bucket,
+      UpdateReplacePolicy: Retain,
+    },
+    CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9: Object {
+      Properties: Object {
+        Bucket: Object {
+          Ref: CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+        },
+        PolicyDocument: Object {
+          Statement: Array [
+            Object {
+              Action: *,
+              Condition: Object {
+                Bool: Object {
+                  aws:SecureTransport: false,
                 },
               },
-              "Effect": "Deny",
-              "Principal": Object {
-                "AWS": "*",
+              Effect: Deny,
+              Principal: Object {
+                AWS: *,
               },
-              "Resource": Array [
+              Resource: Array [
                 Object {
-                  "Fn::Join": Array [
-                    "",
+                  Fn::Join: Array [
+                    ,
                     Array [
                       Object {
-                        "Fn::GetAtt": Array [
-                          "CloudFrontToS3S3Bucket9CE6AB04",
-                          "Arn",
+                        Fn::GetAtt: Array [
+                          CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+                          Arn,
                         ],
                       },
-                      "/*",
+                      /*,
                     ],
                   ],
                 },
                 Object {
-                  "Fn::GetAtt": Array [
-                    "CloudFrontToS3S3Bucket9CE6AB04",
-                    "Arn",
+                  Fn::GetAtt: Array [
+                    CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+                    Arn,
                   ],
                 },
               ],
-              "Sid": "HttpsOnly",
+              Sid: HttpsOnly,
+            },
+          ],
+          Version: 2012-10-17,
+        },
+      },
+      Type: AWS::S3::BucketPolicy,
+    },
+    CloudFrontToS3S3Bucket9CE6AB04: Object {
+      DeletionPolicy: Retain,
+      Properties: Object {
+        BucketEncryption: Object {
+          ServerSideEncryptionConfiguration: Array [
+            Object {
+              ServerSideEncryptionByDefault: Object {
+                SSEAlgorithm: AES256,
+              },
+            },
+          ],
+        },
+        LoggingConfiguration: Object {
+          DestinationBucketName: Object {
+            Ref: CloudFrontToS3S3LoggingBucketEF5CD8B2,
+          },
+        },
+        MetricsConfigurations: Array [
+          Object {
+            Id: EntireBucket,
+          },
+        ],
+        PublicAccessBlockConfiguration: Object {
+          BlockPublicAcls: true,
+          BlockPublicPolicy: true,
+          IgnorePublicAcls: true,
+          RestrictPublicBuckets: true,
+        },
+        Tags: Array [
+          Object {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
+      },
+      Type: AWS::S3::Bucket,
+      UpdateReplacePolicy: Retain,
+    },
+    CloudFrontToS3S3BucketPolicy2495300D: Object {
+      Metadata: Object {
+        cfn_nag: Object {
+          rules_to_suppress: Array [
+            Object {
+              id: F16,
+              reason: Public website bucket policy requires a wildcard principal,
+            },
+          ],
+        },
+      },
+      Properties: Object {
+        Bucket: Object {
+          Ref: CloudFrontToS3S3Bucket9CE6AB04,
+        },
+        PolicyDocument: Object {
+          Statement: Array [
+            Object {
+              Action: *,
+              Condition: Object {
+                Bool: Object {
+                  aws:SecureTransport: false,
+                },
+              },
+              Effect: Deny,
+              Principal: Object {
+                AWS: *,
+              },
+              Resource: Array [
+                Object {
+                  Fn::Join: Array [
+                    ,
+                    Array [
+                      Object {
+                        Fn::GetAtt: Array [
+                          CloudFrontToS3S3Bucket9CE6AB04,
+                          Arn,
+                        ],
+                      },
+                      /*,
+                    ],
+                  ],
+                },
+                Object {
+                  Fn::GetAtt: Array [
+                    CloudFrontToS3S3Bucket9CE6AB04,
+                    Arn,
+                  ],
+                },
+              ],
+              Sid: HttpsOnly,
             },
             Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "CanonicalUser": Object {
-                  "Fn::GetAtt": Array [
-                    "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F",
-                    "S3CanonicalUserId",
+              Action: s3:GetObject,
+              Effect: Allow,
+              Principal: Object {
+                CanonicalUser: Object {
+                  Fn::GetAtt: Array [
+                    CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F,
+                    S3CanonicalUserId,
                   ],
                 },
               },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
                     Object {
-                      "Fn::GetAtt": Array [
-                        "CloudFrontToS3S3Bucket9CE6AB04",
-                        "Arn",
+                      Fn::GetAtt: Array [
+                        CloudFrontToS3S3Bucket9CE6AB04,
+                        Arn,
                       ],
                     },
-                    "/*",
+                    /*,
                   ],
                 ],
               },
             },
           ],
-          "Version": "2012-10-17",
+          Version: 2012-10-17,
         },
       },
-      "Type": "AWS::S3::BucketPolicy",
+      Type: AWS::S3::BucketPolicy,
     },
-    "CloudFrontToS3S3LoggingBucketEF5CD8B2": Object {
-      "DeletionPolicy": "Retain",
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
+    CloudFrontToS3S3LoggingBucketEF5CD8B2: Object {
+      DeletionPolicy: Retain,
+      Metadata: Object {
+        cdk_nag: Object {
+          rules_to_suppress: Array [
             Object {
-              "id": "W35",
-              "reason": "This S3 bucket is used as the access logging bucket for another bucket",
+              id: AwsSolutions-S1,
+              reason: Used to store access logs for other buckets,
+            },
+          ],
+        },
+        cfn_nag: Object {
+          rules_to_suppress: Array [
+            Object {
+              id: W35,
+              reason: This S3 bucket is used as the access logging bucket for another bucket,
             },
           ],
         },
       },
-      "Properties": Object {
-        "AccessControl": "LogDeliveryWrite",
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
+      Properties: Object {
+        AccessControl: LogDeliveryWrite,
+        BucketEncryption: Object {
+          ServerSideEncryptionConfiguration: Array [
             Object {
-              "ServerSideEncryptionByDefault": Object {
-                "SSEAlgorithm": "AES256",
+              ServerSideEncryptionByDefault: Object {
+                SSEAlgorithm: AES256,
               },
             },
           ],
         },
-        "PublicAccessBlockConfiguration": Object {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
+        PublicAccessBlockConfiguration: Object {
+          BlockPublicAcls: true,
+          BlockPublicPolicy: true,
+          IgnorePublicAcls: true,
+          RestrictPublicBuckets: true,
         },
-        "VersioningConfiguration": Object {
-          "Status": "Enabled",
-        },
+        Tags: Array [
+          Object {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
       },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Retain",
+      Type: AWS::S3::Bucket,
+      UpdateReplacePolicy: Retain,
     },
-    "CloudFrontToS3S3LoggingBucketPolicy360F3875": Object {
-      "Properties": Object {
-        "Bucket": Object {
-          "Ref": "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+    CloudFrontToS3S3LoggingBucketPolicy360F3875: Object {
+      Properties: Object {
+        Bucket: Object {
+          Ref: CloudFrontToS3S3LoggingBucketEF5CD8B2,
         },
-        "PolicyDocument": Object {
-          "Statement": Array [
+        PolicyDocument: Object {
+          Statement: Array [
             Object {
-              "Action": "*",
-              "Condition": Object {
-                "Bool": Object {
-                  "aws:SecureTransport": "false",
+              Action: *,
+              Condition: Object {
+                Bool: Object {
+                  aws:SecureTransport: false,
                 },
               },
-              "Effect": "Deny",
-              "Principal": Object {
-                "AWS": "*",
+              Effect: Deny,
+              Principal: Object {
+                AWS: *,
               },
-              "Resource": Array [
+              Resource: Array [
                 Object {
-                  "Fn::Join": Array [
-                    "",
+                  Fn::Join: Array [
+                    ,
                     Array [
                       Object {
-                        "Fn::GetAtt": Array [
-                          "CloudFrontToS3S3LoggingBucketEF5CD8B2",
-                          "Arn",
+                        Fn::GetAtt: Array [
+                          CloudFrontToS3S3LoggingBucketEF5CD8B2,
+                          Arn,
                         ],
                       },
-                      "/*",
+                      /*,
                     ],
                   ],
                 },
                 Object {
-                  "Fn::GetAtt": Array [
-                    "CloudFrontToS3S3LoggingBucketEF5CD8B2",
-                    "Arn",
+                  Fn::GetAtt: Array [
+                    CloudFrontToS3S3LoggingBucketEF5CD8B2,
+                    Arn,
                   ],
                 },
               ],
-              "Sid": "HttpsOnly",
+              Sid: HttpsOnly,
             },
           ],
-          "Version": "2012-10-17",
+          Version: 2012-10-17,
         },
       },
-      "Type": "AWS::S3::BucketPolicy",
+      Type: AWS::S3::BucketPolicy,
     },
-    "CustomResource8CDCD7A7": Object {
-      "DependsOn": Array [
-        "CustomResourceServiceRoleDefaultPolicy62213138",
-        "CustomResourceServiceRoleE774390D",
+    CustomResource8CDCD7A7: Object {
+      DependsOn: Array [
+        CustomResourcePolicy79526710,
+        CustomResourceRoleAB1EF463,
       ],
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
+      Metadata: Object {
+        cfn_nag: Object {
+          rules_to_suppress: Array [
             Object {
-              "id": "W58",
-              "reason": "Invalid warning: function has access to cloudwatch",
+              id: W58,
+              reason: Invalid warning: function has access to cloudwatch,
             },
             Object {
-              "id": "W89",
-              "reason": "This CustomResource does not need to be deployed inside a VPC",
+              id: W89,
+              reason: This CustomResource does not need to be deployed inside a VPC,
             },
             Object {
-              "id": "W92",
-              "reason": "This CustomResource does not need to define ReservedConcurrentExecutions to reserve simultaneous executions",
+              id: W92,
+              reason: This CustomResource does not need to define ReservedConcurrentExecutions to reserve simultaneous executions,
             },
           ],
         },
       },
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3Bucket4EEC6A35",
+      Properties: Object {
+        Code: Object {
+          S3Bucket: Object {
+            Ref: AssetParameters[HASH REMOVED],
           },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
+          S3Key: Object {
+            Fn::Join: Array [
+              ,
               Array [
                 Object {
-                  "Fn::Select": Array [
+                  Fn::Select: Array [
                     0,
                     Object {
-                      "Fn::Split": Array [
-                        "||",
+                      Fn::Split: Array [
+                        ||,
                         Object {
-                          "Ref": "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3VersionKey9A0AA1FE",
+                          Ref: AssetParameters[HASH REMOVED],
                         },
                       ],
                     },
                   ],
                 },
                 Object {
-                  "Fn::Select": Array [
+                  Fn::Select: Array [
                     1,
                     Object {
-                      "Fn::Split": Array [
-                        "||",
+                      Fn::Split: Array [
+                        ||,
                         Object {
-                          "Ref": "AssetParameters86ec7309c1cbd8d5e15253fa2ffca5ffb39033a4b72e305ccf986040423e8210S3VersionKey9A0AA1FE",
+                          Ref: AssetParameters[HASH REMOVED],
                         },
                       ],
                     },
@@ -867,431 +1050,455 @@ Object {
             ],
           },
         },
-        "Description": "CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint",
-        "Environment": Object {
-          "Variables": Object {
-            "SOLUTION_IDENTIFIER": "AwsSolution/SO0109/%%VERSION%%",
+        Description: CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint,
+        Environment: Object {
+          Variables: Object {
+            SOLUTION_IDENTIFIER: AwsSolution/SO0109/%%VERSION%%,
           },
         },
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "CustomResourceServiceRoleE774390D",
-            "Arn",
+        Handler: index.handler,
+        Role: Object {
+          Fn::GetAtt: Array [
+            CustomResourceRoleAB1EF463,
+            Arn,
           ],
         },
-        "Runtime": "nodejs12.x",
-        "Timeout": 30,
+        Runtime: nodejs14.x,
+        Tags: Array [
+          Object {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
+        Timeout: 30,
       },
-      "Type": "AWS::Lambda::Function",
+      Type: AWS::Lambda::Function,
     },
-    "CustomResourceServiceRoleDefaultPolicy62213138": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
+    CustomResourcePolicy79526710: Object {
+      Metadata: Object {
+        cdk_nag: Object {
+          rules_to_suppress: Array [
             Object {
-              "Action": Array [
-                "medialive:DescribeInputSecurityGroup",
-                "medialive:createInputSecurityGroup",
-                "medialive:describeInput",
-                "medialive:createInput",
-                "medialive:deleteInput",
-                "medialive:stopChannel",
-                "medialive:createChannel",
-                "medialive:deleteChannel",
-                "medialive:deleteInputSecurityGroup",
-                "medialive:describeChannel",
-                "medialive:startChannel",
-                "medialive:createTags",
-                "medialive:deleteTags",
+              id: AwsSolutions-IAM5,
+              reason: Resource ARNs are not generated at the time of policy creation,
+            },
+          ],
+        },
+      },
+      Properties: Object {
+        PolicyDocument: Object {
+          Statement: Array [
+            Object {
+              Action: Array [
+                medialive:DescribeInputSecurityGroup,
+                medialive:createInputSecurityGroup,
+                medialive:describeInput,
+                medialive:createInput,
+                medialive:deleteInput,
+                medialive:stopChannel,
+                medialive:createChannel,
+                medialive:deleteChannel,
+                medialive:deleteInputSecurityGroup,
+                medialive:describeChannel,
+                medialive:startChannel,
+                medialive:createTags,
+                medialive:deleteTags,
               ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:",
+                    arn:,
                     Object {
-                      "Ref": "AWS::Partition",
+                      Ref: AWS::Partition,
                     },
-                    ":medialive:",
+                    :medialive:,
                     Object {
-                      "Ref": "AWS::Region",
+                      Ref: AWS::Region,
                     },
-                    ":",
+                    :,
                     Object {
-                      "Ref": "AWS::AccountId",
+                      Ref: AWS::AccountId,
                     },
-                    ":*",
+                    :*,
                   ],
                 ],
               },
             },
             Object {
-              "Action": "ssm:PutParameter",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Action: ssm:PutParameter,
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:",
+                    arn:,
                     Object {
-                      "Ref": "AWS::Partition",
+                      Ref: AWS::Partition,
                     },
-                    ":ssm:",
+                    :ssm:,
                     Object {
-                      "Ref": "AWS::Region",
+                      Ref: AWS::Region,
                     },
-                    ":",
+                    :,
                     Object {
-                      "Ref": "AWS::AccountId",
+                      Ref: AWS::AccountId,
                     },
-                    ":parameter/*",
+                    :parameter/*,
                   ],
                 ],
               },
             },
             Object {
-              "Action": "iam:PassRole",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "MediaLiveRole1149D189",
-                  "Arn",
+              Action: iam:PassRole,
+              Effect: Allow,
+              Resource: Object {
+                Fn::GetAtt: Array [
+                  MediaLiveRole1149D189,
+                  Arn,
                 ],
               },
             },
           ],
-          "Version": "2012-10-17",
+          Version: 2012-10-17,
         },
-        "PolicyName": "CustomResourceServiceRoleDefaultPolicy62213138",
-        "Roles": Array [
+        PolicyName: CustomResourcePolicy79526710,
+        Roles: Array [
           Object {
-            "Ref": "CustomResourceServiceRoleE774390D",
+            Ref: CustomResourceRoleAB1EF463,
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      Type: AWS::IAM::Policy,
     },
-    "CustomResourceServiceRoleE774390D": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
+    CustomResourceRoleAB1EF463: Object {
+      Properties: Object {
+        AssumeRolePolicyDocument: Object {
+          Statement: Array [
             Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+              Action: sts:AssumeRole,
+              Effect: Allow,
+              Principal: Object {
+                Service: lambda.amazonaws.com,
               },
             },
           ],
-          "Version": "2012-10-17",
+          Version: 2012-10-17,
         },
-        "ManagedPolicyArns": Array [
+        Tags: Array [
           Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
+            Key: SolutionId,
+            Value: SO0109,
           },
         ],
       },
-      "Type": "AWS::IAM::Role",
+      Type: AWS::IAM::Role,
     },
-    "MediaLiveChannel": Object {
-      "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F",
-        "CloudFrontToS3CloudFrontDistribution241D9866",
-        "CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9",
-        "CloudFrontToS3CloudfrontLoggingBucket8350BE9B",
-        "CloudFrontToS3S3BucketPolicy2495300D",
-        "CloudFrontToS3S3Bucket9CE6AB04",
-        "CloudFrontToS3S3LoggingBucketPolicy360F3875",
-        "CloudFrontToS3S3LoggingBucketEF5CD8B2",
+    MediaLiveChannel: Object {
+      DeletionPolicy: Delete,
+      DependsOn: Array [
+        CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F,
+        CloudFrontToS3CloudFrontDistribution241D9866,
+        CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9,
+        CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+        CloudFrontToS3S3BucketPolicy2495300D,
+        CloudFrontToS3S3Bucket9CE6AB04,
+        CloudFrontToS3S3LoggingBucketPolicy360F3875,
+        CloudFrontToS3S3LoggingBucketEF5CD8B2,
       ],
-      "Properties": Object {
-        "Codec": "AVC",
-        "EncodingProfile": Object {
-          "Ref": "EncodingProfile",
+      Properties: Object {
+        Codec: AVC,
+        EncodingProfile: Object {
+          Ref: EncodingProfile,
         },
-        "InputId": Object {
-          "Fn::GetAtt": Array [
-            "MediaLiveInput",
-            "Id",
+        InputId: Object {
+          Fn::GetAtt: Array [
+            MediaLiveInput,
+            Id,
           ],
         },
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "MediaLiveRole1149D189",
-            "Arn",
+        Role: Object {
+          Fn::GetAtt: Array [
+            MediaLiveRole1149D189,
+            Arn,
           ],
         },
-        "S3Bucket": Object {
-          "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
+        S3Bucket: Object {
+          Ref: CloudFrontToS3S3Bucket9CE6AB04,
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "CustomResource8CDCD7A7",
-            "Arn",
+        ServiceToken: Object {
+          Fn::GetAtt: Array [
+            CustomResource8CDCD7A7,
+            Arn,
           ],
         },
-        "StreamName": Object {
-          "Ref": "AWS::StackName",
+        StreamName: Object {
+          Ref: AWS::StackName,
         },
-        "Type": Object {
-          "Ref": "InputType",
+        Type: Object {
+          Ref: InputType,
         },
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
+      Type: AWS::CloudFormation::CustomResource,
+      UpdateReplacePolicy: Delete,
     },
-    "MediaLiveChannelStart": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "ChannelId": Object {
-          "Fn::GetAtt": Array [
-            "MediaLiveChannel",
-            "ChannelId",
+    MediaLiveChannelStart: Object {
+      DeletionPolicy: Delete,
+      Properties: Object {
+        ChannelId: Object {
+          Fn::GetAtt: Array [
+            MediaLiveChannel,
+            ChannelId,
           ],
         },
-        "ChannelStart": Object {
-          "Ref": "ChannelStart",
+        ChannelStart: Object {
+          Ref: ChannelStart,
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "CustomResource8CDCD7A7",
-            "Arn",
+        ServiceToken: Object {
+          Fn::GetAtt: Array [
+            CustomResource8CDCD7A7,
+            Arn,
           ],
         },
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
+      Type: AWS::CloudFormation::CustomResource,
+      UpdateReplacePolicy: Delete,
     },
-    "MediaLiveInput": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "Cidr": Object {
-          "Ref": "InputCIDR",
+    MediaLiveInput: Object {
+      DeletionPolicy: Delete,
+      Properties: Object {
+        Cidr: Object {
+          Ref: InputCIDR,
         },
-        "InputDeviceId": Object {
-          "Ref": "InputDeviceId",
+        InputDeviceId: Object {
+          Ref: InputDeviceId,
         },
-        "PullPass": Object {
-          "Ref": "PullPass",
+        PullPass: Object {
+          Ref: PullPass,
         },
-        "PullUrl": Object {
-          "Ref": "PullUrl",
+        PullUrl: Object {
+          Ref: PullUrl,
         },
-        "PullUser": Object {
-          "Ref": "PullUser",
+        PullUser: Object {
+          Ref: PullUser,
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "CustomResource8CDCD7A7",
-            "Arn",
+        ServiceToken: Object {
+          Fn::GetAtt: Array [
+            CustomResource8CDCD7A7,
+            Arn,
           ],
         },
-        "StreamName": Object {
-          "Ref": "AWS::StackName",
+        StreamName: Object {
+          Ref: AWS::StackName,
         },
-        "Type": Object {
-          "Ref": "InputType",
+        Type: Object {
+          Ref: InputType,
         },
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
+      Type: AWS::CloudFormation::CustomResource,
+      UpdateReplacePolicy: Delete,
     },
-    "MediaLiveRole1149D189": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
+    MediaLiveRole1149D189: Object {
+      Properties: Object {
+        AssumeRolePolicyDocument: Object {
+          Statement: Array [
             Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "medialive.amazonaws.com",
+              Action: sts:AssumeRole,
+              Effect: Allow,
+              Principal: Object {
+                Service: medialive.amazonaws.com,
               },
             },
           ],
-          "Version": "2012-10-17",
+          Version: 2012-10-17,
         },
+        Tags: Array [
+          Object {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
       },
-      "Type": "AWS::IAM::Role",
+      Type: AWS::IAM::Role,
     },
-    "UUID": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "CustomResource8CDCD7A7",
-            "Arn",
+    UUID: Object {
+      DeletionPolicy: Delete,
+      Properties: Object {
+        ServiceToken: Object {
+          Fn::GetAtt: Array [
+            CustomResource8CDCD7A7,
+            Arn,
           ],
         },
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
+      Type: AWS::CloudFormation::CustomResource,
+      UpdateReplacePolicy: Delete,
     },
-    "mediaLivePolicyA0AA0DF7": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
+    mediaLivePolicyA0AA0DF7: Object {
+      Metadata: Object {
+        cdk_nag: Object {
+          rules_to_suppress: Array [
             Object {
-              "Action": Array [
-                "s3:ListBucket",
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:DeleteObject",
+              id: AwsSolutions-IAM5,
+              reason: Resource ARNs are not generated at the time of policy creation,
+            },
+          ],
+        },
+      },
+      Properties: Object {
+        PolicyDocument: Object {
+          Statement: Array [
+            Object {
+              Action: Array [
+                s3:ListBucket,
+                s3:PutObject,
+                s3:GetObject,
+                s3:DeleteObject,
               ],
-              "Condition": Object {
-                "StringEquals": Object {
-                  "s3:ResourceAccount": Object {
-                    "Ref": "AWS::AccountId",
+              Condition: Object {
+                StringEquals: Object {
+                  s3:ResourceAccount: Object {
+                    Ref: AWS::AccountId,
                   },
                 },
               },
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:aws:s3:::",
+                    arn:aws:s3:::,
                     Object {
-                      "Ref": "CloudFrontToS3S3Bucket9CE6AB04",
+                      Ref: CloudFrontToS3S3Bucket9CE6AB04,
                     },
-                    "/*",
+                    /*,
                   ],
                 ],
               },
             },
             Object {
-              "Action": Array [
-                "ssm:DescribeParameters",
-                "ssm:GetParameter",
-                "ssm:GetParameters",
-                "ssm:PutParameter",
+              Action: Array [
+                ssm:DescribeParameters,
+                ssm:GetParameter,
+                ssm:GetParameters,
+                ssm:PutParameter,
               ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:",
+                    arn:,
                     Object {
-                      "Ref": "AWS::Partition",
+                      Ref: AWS::Partition,
                     },
-                    ":ssm:",
+                    :ssm:,
                     Object {
-                      "Ref": "AWS::Region",
+                      Ref: AWS::Region,
                     },
-                    ":",
+                    :,
                     Object {
-                      "Ref": "AWS::AccountId",
+                      Ref: AWS::AccountId,
                     },
-                    ":parameter/*",
+                    :parameter/*,
                   ],
                 ],
               },
             },
             Object {
-              "Action": Array [
-                "mediaconnect:ManagedDescribeFlow",
-                "mediaconnect:ManagedAddOutput",
-                "mediaconnect:ManagedRemoveOutput",
+              Action: Array [
+                mediaconnect:ManagedDescribeFlow,
+                mediaconnect:ManagedAddOutput,
+                mediaconnect:ManagedRemoveOutput,
               ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:",
+                    arn:,
                     Object {
-                      "Ref": "AWS::Partition",
+                      Ref: AWS::Partition,
                     },
-                    ":mediaconnect:",
+                    :mediaconnect:,
                     Object {
-                      "Ref": "AWS::Region",
+                      Ref: AWS::Region,
                     },
-                    ":",
+                    :,
                     Object {
-                      "Ref": "AWS::AccountId",
+                      Ref: AWS::AccountId,
                     },
-                    ":*",
+                    :*,
                   ],
                 ],
               },
             },
             Object {
-              "Action": Array [
-                "ec2:describeSubnets",
-                "ec2:describeNetworkInterfaces",
-                "ec2:createNetworkInterface",
-                "ec2:createNetworkInterfacePermission",
-                "ec2:deleteNetworkInterface",
-                "ec2:deleteNetworkInterfacePermission",
-                "ec2:describeSecurityGroups",
+              Action: Array [
+                ec2:describeSubnets,
+                ec2:describeNetworkInterfaces,
+                ec2:createNetworkInterface,
+                ec2:createNetworkInterfacePermission,
+                ec2:deleteNetworkInterface,
+                ec2:deleteNetworkInterfacePermission,
+                ec2:describeSecurityGroups,
               ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:",
+                    arn:,
                     Object {
-                      "Ref": "AWS::Partition",
+                      Ref: AWS::Partition,
                     },
-                    ":ec2:",
+                    :ec2:,
                     Object {
-                      "Ref": "AWS::Region",
+                      Ref: AWS::Region,
                     },
-                    ":",
+                    :,
                     Object {
-                      "Ref": "AWS::AccountId",
+                      Ref: AWS::AccountId,
                     },
-                    ":*",
+                    :*,
                   ],
                 ],
               },
             },
             Object {
-              "Action": Array [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                "logs:DescribeLogStreams",
-                "logs:DescribeLogGroups",
+              Action: Array [
+                logs:CreateLogGroup,
+                logs:CreateLogStream,
+                logs:PutLogEvents,
+                logs:DescribeLogStreams,
+                logs:DescribeLogGroups,
               ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
+              Effect: Allow,
+              Resource: Object {
+                Fn::Join: Array [
+                  ,
                   Array [
-                    "arn:",
+                    arn:,
                     Object {
-                      "Ref": "AWS::Partition",
+                      Ref: AWS::Partition,
                     },
-                    ":logs:*:*:*",
+                    :logs:*:*:*,
                   ],
                 ],
               },
             },
           ],
-          "Version": "2012-10-17",
+          Version: 2012-10-17,
         },
-        "PolicyName": "mediaLivePolicyA0AA0DF7",
-        "Roles": Array [
+        PolicyName: mediaLivePolicyA0AA0DF7,
+        Roles: Array [
           Object {
-            "Ref": "MediaLiveRole1149D189",
+            Ref: MediaLiveRole1149D189,
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      Type: AWS::IAM::Policy,
     },
   },
 }

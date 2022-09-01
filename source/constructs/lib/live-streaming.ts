@@ -15,6 +15,9 @@ import * as cdk from '@aws-cdk/core';
 import * as iam from '@aws-cdk/aws-iam';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as s3 from '@aws-cdk/aws-s3';
+import { NagSuppressions } from 'cdk-nag';
+import * as appreg from '@aws-cdk/aws-servicecatalogappregistry';
+import * as applicationinsights from '@aws-cdk/aws-applicationinsights';
 
 //Solution construct
 import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
@@ -27,7 +30,9 @@ export class LiveStreaming extends cdk.Stack {
         /**
          * CloudFormation Template Descrption
          */
-        this.templateOptions.description = '(SO0109) Live Streaming on AWS with Amazon S3 Solution %%VERSION%%';
+        const solutionId = 'SO0109'
+        const solutionName = 'Live Streaming on AWS with Amazon S3'
+        this.templateOptions.description = `(${solutionId}) ${solutionName} Solution %%VERSION%%`;
         /**
          * Cfn Parameters
          */
@@ -132,7 +137,7 @@ export class LiveStreaming extends cdk.Stack {
         /**
          * Mapping for sending anonymous metrics to AWS Solution Builders API
          */
-        new cdk.CfnMapping(this, 'AnonymousData', {
+        new cdk.CfnMapping(this, 'AnonymousData', { // NOSONAR
             mapping: {
                 SendAnonymousData: {
                     Data: 'Yes'
@@ -151,7 +156,7 @@ export class LiveStreaming extends cdk.Stack {
             }
         });
 
-        const distibution = new CloudFrontToS3(this, 'CloudFrontToS3', {
+        const distribution = new CloudFrontToS3(this, 'CloudFrontToS3', {
             cloudFrontDistributionProps: {
               defaultBehavior: {
                 cachePolicy
@@ -160,13 +165,57 @@ export class LiveStreaming extends cdk.Stack {
                 return { httpStatus, ttl: cdk.Duration.seconds(1) };
               })
             },
+            bucketProps: {
+                versioned: false
+            },
+            loggingBucketProps: {
+                versioned: false
+            },
+            cloudFrontLoggingBucketProps: {
+                versioned: false
+            },
             insertHttpSecurityHeaders: false
         });
 
         const bucketMetrics: s3.BucketMetrics = {
             id: 'EntireBucket'
         };
-        distibution.s3Bucket?.addMetric(bucketMetrics);
+        distribution.s3Bucket?.addMetric(bucketMetrics);
+
+        //cdk_nag
+        NagSuppressions.addResourceSuppressions(
+            distribution.s3LoggingBucket!,
+            [
+                {
+                    id: 'AwsSolutions-S1',
+                    reason: 'Used to store access logs for other buckets'
+                }
+            ]
+        );
+        NagSuppressions.addResourceSuppressions(
+            distribution.cloudFrontLoggingBucket!,
+            [
+                {
+                    id: 'AwsSolutions-S1',
+                    reason: 'Used to store access logs for other buckets'
+                }
+            ]
+        );
+        NagSuppressions.addResourceSuppressions(
+            distribution.cloudFrontWebDistribution,
+            [
+              {
+                id: 'AwsSolutions-CFR1',
+                reason: 'Use case does not warrant CloudFront Geo restriction'
+              }, {
+                id: 'AwsSolutions-CFR2',
+                reason: 'Use case does not warrant CloudFront integration with AWS WAF'
+              }, {
+                id: 'AwsSolutions-CFR4',
+                reason: 'CloudFront automatically sets the security policy to TLSv1 when the distribution uses the CloudFront domain name'
+              }
+            ],
+          );
 
         /**
          * IAM Roles
@@ -177,7 +226,7 @@ export class LiveStreaming extends cdk.Stack {
         const mediaLivePolicy = new iam.Policy(this, 'mediaLivePolicy', {
             statements: [
                 new iam.PolicyStatement({
-                    resources: [`arn:aws:s3:::${distibution.s3Bucket?.bucketName}/*`],
+                    resources: [`arn:aws:s3:::${distribution.s3Bucket?.bucketName}/*`],
                     actions: [
                         's3:ListBucket',
                         's3:PutObject',
@@ -231,21 +280,28 @@ export class LiveStreaming extends cdk.Stack {
                 }),
             ]
         });
-
         mediaLivePolicy.attachToRole(mediaLiveRole);
+
+        //cdk_nag
+        NagSuppressions.addResourceSuppressions(
+            mediaLivePolicy,
+            [
+                {
+                    id: 'AwsSolutions-IAM5',
+                    reason: 'Resource ARNs are not generated at the time of policy creation'
+                }
+            ]
+        );
+
         /**
          * Custom Resource, Role and Policy.
          */
-        const customResourceLambda = new lambda.Function(this, 'CustomResource', {
-            runtime: lambda.Runtime.NODEJS_12_X,
-            handler: 'index.handler',
-            description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
-            environment: {
-                SOLUTION_IDENTIFIER: 'AwsSolution/SO0109/%%VERSION%%'
-            },
-            code: lambda.Code.fromAsset('../custom-resource'),
-            timeout: cdk.Duration.seconds(30),
-            initialPolicy: [
+        const customResourceRole = new iam.Role(this, 'CustomResourceRole', {
+            assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
+        });
+
+        const customResourcePolicy = new iam.Policy(this, 'CustomResourcePolicy', {
+            statements: [
                 new iam.PolicyStatement({
                     resources: [`arn:${cdk.Aws.PARTITION}:medialive:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:*`],
                     actions: [
@@ -276,6 +332,33 @@ export class LiveStreaming extends cdk.Stack {
                 })
             ]
         });
+        customResourcePolicy.attachToRole(customResourceRole);
+
+        //cdk_nag
+        NagSuppressions.addResourceSuppressions(
+            customResourcePolicy,
+            [
+              {
+                id: 'AwsSolutions-IAM5',
+                reason: 'Resource ARNs are not generated at the time of policy creation'
+              }
+            ]
+          );
+
+        const customResourceLambda = new lambda.Function(this, 'CustomResource', {
+            runtime: lambda.Runtime.NODEJS_14_X,
+            handler: 'index.handler',
+            description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
+            environment: {
+                SOLUTION_IDENTIFIER: `AwsSolution/${solutionId}/%%VERSION%%`
+            },
+            code: lambda.Code.fromAsset('../custom-resource'),
+            timeout: cdk.Duration.seconds(30),
+            role: customResourceRole
+        });
+        customResourceLambda.node.addDependency(customResourceRole);
+        customResourceLambda.node.addDependency(customResourcePolicy);
+
         /** get the cfn resource for the role and attach cfn_nag rule */
         const cfnCustomResource = customResourceLambda.node.findChild('Resource') as lambda.CfnFunction;
         cfnCustomResource.cfnOptions.metadata = {
@@ -319,16 +402,16 @@ export class LiveStreaming extends cdk.Stack {
                 Role: mediaLiveRole.roleArn,
                 InputId: mediaLiveInput.getAttString('Id'),
                 Type: inputType.valueAsString,
-                S3Bucket: distibution.s3Bucket?.bucketName
+                S3Bucket: distribution.s3Bucket?.bucketName
             }
         });
         // Create the mediaLiveChannel after S3 bucket and CloudFront distribution is created so we know the S3 name
-        mediaLiveChannel.node.addDependency(distibution);
+        mediaLiveChannel.node.addDependency(distribution);
 
         /**
          * custom resource, this will configure and deploy a mediaLive Channel
          */
-        const startChannel = new cdk.CustomResource(this, 'MediaLiveChannelStart', {
+        const startChannel = new cdk.CustomResource(this, 'MediaLiveChannelStart', { // NOSONAR
             serviceToken: customResourceLambda.functionArn,
             properties: {
                 ChannelId: mediaLiveChannel.getAttString('ChannelId'),
@@ -344,10 +427,10 @@ export class LiveStreaming extends cdk.Stack {
         /**
          * custom resource, this will configure and deploy a mediaLive Channel
          */
-        new cdk.CustomResource(this, 'AnonymousMetric', {
+        new cdk.CustomResource(this, 'AnonymousMetric', { // NOSONAR
             serviceToken: customResourceLambda.functionArn,
             properties: {
-                SolutionId: 'SO0109',
+                SolutionId: `${solutionId}`,
                 UUID: uuid.getAttString('UUID'),
                 Version: '%%VERSION%%',
                 Type: inputType.valueAsString,
@@ -358,33 +441,90 @@ export class LiveStreaming extends cdk.Stack {
             }
         });
 
+
+        /**
+        * AppRegistry
+        */
+        const applicationName = 'LiveStreamingOnAwsWithAmazonS3';
+        const attributeGroup = new appreg.AttributeGroup(this, 'AppRegistryAttributeGroup', {
+            attributeGroupName: 'MediaAndEntertainmentSolutions',
+            description: solutionName,
+            attributes: {
+                ApplicationType: 'AWS Solution',
+                Author: 'Media and Entertainment',
+                Team: 'Media and Entertainment',
+                Version: '%%VERSION%%',
+                SolutionID: solutionId,
+                SolutionName: solutionName
+            }
+        });
+        const appRegistry = new appreg.Application(this, 'AppRegistryApp', {
+            applicationName: applicationName,
+            description: `Service Catalog application to track and manage all your resources. The SolutionId is ${solutionId} and SolutionVersion is %%VERSION%%.`
+        });
+        appRegistry.associateStack(this);
+        cdk.Tags.of(appRegistry).add('SolutionName', solutionName);
+        cdk.Tags.of(appRegistry).add('SolutionVersion', '%%VERSION%%');
+        cdk.Tags.of(appRegistry).add('ApplicationType', 'AWS-Solutions');
+        cdk.Tags.of(appRegistry).add('SolutionDomain', 'MediaAndEntertainment');
+
+        appRegistry.node.addDependency(attributeGroup);
+        appRegistry.associateAttributeGroup(attributeGroup);
+
+        const appInsights = new applicationinsights.CfnApplication(this, 'ApplicationInsightsApp', {
+            resourceGroupName: `AWS_AppRegistry_Application-${applicationName}`,
+            autoConfigurationEnabled: true,
+            cweMonitorEnabled: true,
+            opsCenterEnabled: true
+        });
+        appInsights.node.addDependency(appRegistry);
+
         /**
          * Outputs
          */
-        new cdk.CfnOutput(this, 'LiveStreamUrl', {
-            value: `https://${distibution.cloudFrontWebDistribution.distributionDomainName}/stream/index.m3u8`,
+        new cdk.CfnOutput(this, 'LiveStreamUrl', { // NOSONAR
+            value: `https://${distribution.cloudFrontWebDistribution.distributionDomainName}/stream/index.m3u8`,
             description: 'CloudFront Live Stream URL',
             exportName: `${cdk.Aws.STACK_NAME}-LiveStreamUrl`
         });
-        new cdk.CfnOutput(this, 'MediaLiveConsole', {
+        new cdk.CfnOutput(this, 'MediaLiveConsole', { // NOSONAR
             value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/medialive/home?region=${cdk.Aws.REGION}#!/channels`,
             description: 'MediaLive Channel',
             exportName: `${cdk.Aws.STACK_NAME}-MediaLiveConsole`
         });
-        new cdk.CfnOutput(this, 'LiveStreamBucket', {
-            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/s3/buckets/${distibution.s3Bucket?.bucketName}?region=${cdk.Aws.REGION}`,
+        new cdk.CfnOutput(this, 'LiveStreamBucket', { // NOSONAR
+            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/s3/buckets/${distribution.s3Bucket?.bucketName}?region=${cdk.Aws.REGION}`,
             description: 'Live Stream Destination Bucket',
             exportName: `${cdk.Aws.STACK_NAME}-LiveStreamBucket`
         });
-        new cdk.CfnOutput(this, 'BucketMetrics', {
-            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/s3/bucket/${distibution.s3Bucket?.bucketName}/metrics/bucket_metrics?region=${cdk.Aws.REGION}&tab=request&period=1h`,
+        new cdk.CfnOutput(this, 'BucketMetrics', { // NOSONAR
+            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/s3/bucket/${distribution.s3Bucket?.bucketName}/metrics/bucket_metrics?region=${cdk.Aws.REGION}&tab=request&period=1h`,
             description: 'Bucket Request Metrics',
             exportName: `${cdk.Aws.STACK_NAME}-BucketMetrics`
         });
-        new cdk.CfnOutput(this, 'MediaLivePushEndpoint', {
+        new cdk.CfnOutput(this, 'MediaLivePushEndpoint', { // NOSONAR
             value: mediaLiveInput.getAttString('EndPoint'),
             description: 'The MediaLive Input ingress endpoint for push input types',
             exportName: `${cdk.Aws.STACK_NAME}-MediaLiveEndpoint`
         });
+        new cdk.CfnOutput(this, 'AppRegistryConsole', { // NOSONAR
+            description: 'AppRegistry',
+            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/servicecatalog/home?#applications/${appRegistry.applicationId}`,
+            exportName: `${cdk.Aws.STACK_NAME}-AppRegistry`
+        });
+        new cdk.CfnOutput(this, 'MediaLiveChannelId', { // NOSONAR
+            description: 'MediaLive Channel Id',
+            value: `${mediaLiveChannel.getAttString('ChannelId')}`,
+            exportName: `${cdk.Aws.STACK_NAME}-MediaLiveChannelId`
+        });
+
+
+        /**
+        * Tag all resources with Solution Id
+        */
+        cdk.Tags.of(this).add(
+            'SolutionId',
+            solutionId
+        );
     }
 }

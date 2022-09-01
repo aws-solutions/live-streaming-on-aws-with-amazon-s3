@@ -5,4 +5,5 @@ dev/
 global-s3-assets/
 regional-s3-assets/
 open-source/
+source/test/coverage-reports/jest/*
 .DS_Store

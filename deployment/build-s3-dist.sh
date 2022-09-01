@@ -64,11 +64,19 @@ echo "--------------------------------------------------------------------------
 echo "[Synth] CDK Project"
 echo "------------------------------------------------------------------------------"
 # Make sure user has the newest CDK version
-npm uninstall -g aws-cdk && npm install -g aws-cdk
+npm uninstall -g aws-cdk && npm install -g aws-cdk@1
 
 cd $source_dir/constructs
 npm install
 cdk synth --output=$staging_dist_dir
+if [ $? -ne 0 ]
+then
+    echo "******************************************************************************"
+    echo "cdk-nag found errors"
+    echo "******************************************************************************"
+    exit 1
+fi
+
 cd $staging_dist_dir
 rm tree.json manifest.json cdk.out
 

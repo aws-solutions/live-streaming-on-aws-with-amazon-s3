@@ -34,14 +34,16 @@ const createDeviceInput = async (config) => {
               {
                 Id:config.InputDeviceId
               }
-            ]
+            ],
+            Tags: {'SolutionId': 'SO0109'}
         };
-        data = await medialive.createInput(params).promise();
+        let data = await medialive.createInput(params).promise();
         responseData = {
             Id: data.Input.Id,
             EndPoint: 'Push InputType only'
         };
     } catch (err) {
+        console.error(err);
         throw (err);
     }
     return responseData;
@@ -74,7 +76,8 @@ const createRtpInput = async (config) => {
         params = {
             InputSecurityGroups: [data.SecurityGroup.Id],
             Name: config.StreamName,
-            Type: config.Type
+            Type: config.Type,
+            Tags: {'SolutionId': 'SO0109'}
         };
         data = await medialive.createInput(params).promise();
         responseData = {
@@ -82,6 +85,7 @@ const createRtpInput = async (config) => {
             EndPoint: data.Input.Destinations[0].Url
         };
     } catch (err) {
+        console.error(err);
         throw (err);
     }
     return responseData;
@@ -118,7 +122,8 @@ const createRtmpInput = async (config) => {
             Destinations: [{
                     StreamName: `${config.StreamName}/stream`
                 }
-            ]
+            ],
+            Tags: {'SolutionId': 'SO0109'}
         };
         data = await medialive.createInput(params).promise();
         responseData = {
@@ -126,6 +131,7 @@ const createRtmpInput = async (config) => {
             EndPoint: data.Input.Destinations[0].Url,
         };
     } catch (err) {
+        console.error(err);
         throw (err);
     }
     return responseData;
@@ -160,7 +166,8 @@ const createUrlInput = async (config) => {
             Sources: [{
                     Url: config.PullUrl
                 }
-            ]
+            ],
+            Tags: {'SolutionId': 'SO0109'}
         };
         if (config.PullUser && config.PullUser !== '') {
             params.Sources[0].Username = config.PullUser;
@@ -175,6 +182,7 @@ const createUrlInput = async (config) => {
                 };
                 await ssm.putParameter(ssmParams).promise();
             } catch (err) {
+                console.error(err);
                 throw err;
             }
         }
@@ -184,8 +192,10 @@ const createUrlInput = async (config) => {
             EndPoint: 'Push InputType only'
         };
     } catch (err) {
+        console.error(err);
         throw (err);
     }
+    
     return responseData;
 };
 
@@ -231,6 +241,7 @@ const deleteInput = async (InputId) => {
             await medialive.deleteInputSecurityGroup(params).promise();
         }
     } catch (err) {
+        console.error(err);
         throw err;
     }
     return 'success';
@@ -282,7 +293,7 @@ const createChannel = async (config) => {
             }],
             EncoderSettings: {},
             Tags: {
-              Solution:'SO0013'
+              SolutionId:'SO0109'
             }
         };
 
@@ -321,6 +332,7 @@ const createChannel = async (config) => {
             ChannelId: data.Channel.Id
         };
     } catch (err) {
+        console.error(err);
         throw err;
     }
     return responseData;
@@ -344,6 +356,7 @@ const startChannel = async (config) => {
         };
         await medialive.startChannel(params).promise();
     } catch (err) {
+        console.error(err);
         throw err;
     }
     return 'success';
@@ -360,8 +373,7 @@ const deleteChannel = async (ChannelId) => {
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
-    let params,
-        data;
+    let params;
     try {
         params = {
             ChannelId: ChannelId
@@ -371,6 +383,7 @@ const deleteChannel = async (ChannelId) => {
         await medialive.deleteChannel(params).promise();
         await medialive.waitFor('channelDeleted',params).promise();
     } catch (err) {
+        console.error(err);
         throw err;
     }
     return 'success';
