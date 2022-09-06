@@ -47,7 +47,7 @@ name: 'Terraform'
 on:
   push:
     branches:
-    - "mainline"
+    - "feature/first-terraform-deployment"
   pull_request:
 
 permissions:
