@@ -149,7 +149,11 @@ export class LiveStreaming extends cdk.Stack {
          * Construct also includes a logs bucket for the CloudFront distribution and a CloudFront
          * OriginAccessIdentity which is used to restrict access to S3 from CloudFront.
          */
-        const cachePolicy = new CachePolicy(this, 'CachePolicy', {
+        // Need Unique name for each Cache Policy. 
+        const cachePolicyName = `CachePolicy-${cdk.Aws.STACK_NAME}`;
+
+        const cachePolicy = new CachePolicy(this, `CachePolicy`, {
+            cachePolicyName: cachePolicyName,
             headerBehavior: {
               behavior: 'whitelist',
               headers: ['Origin']
@@ -445,9 +449,9 @@ export class LiveStreaming extends cdk.Stack {
         /**
         * AppRegistry
         */
-        const applicationName = 'LiveStreamingOnAwsWithAmazonS3';
+        const applicationName = `live-streaming-on-aws-with-amazon-s3-${cdk.Aws.STACK_NAME}`;
         const attributeGroup = new appreg.AttributeGroup(this, 'AppRegistryAttributeGroup', {
-            attributeGroupName: 'MediaAndEntertainmentSolutions',
+            attributeGroupName: cdk.Aws.STACK_NAME,
             description: solutionName,
             attributes: {
                 ApplicationType: 'AWS Solution',

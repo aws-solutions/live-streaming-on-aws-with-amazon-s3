@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest --coverage",
+    "test": "jest --coverage --updateSnapshot",
     "cdk": "cdk"
   },
   "devDependencies": {

@@ -415,7 +415,17 @@ Object {
       ],
       Properties: Object {
         Description: Service Catalog application to track and manage all your resources. The SolutionId is SO0109 and SolutionVersion is %%VERSION%%.,
-        Name: LiveStreamingOnAwsWithAmazonS3,
+        Name: Object {
+          Fn::Join: Array [
+            ,
+            Array [
+              live-streaming-on-aws-with-amazon-s3-,
+              Object {
+                Ref: AWS::StackName,
+              },
+            ],
+          ],
+        },
         Tags: Object {
           ApplicationType: AWS-Solutions,
           SolutionDomain: MediaAndEntertainment,
@@ -475,7 +485,9 @@ Object {
           Version: %%VERSION%%,
         },
         Description: Live Streaming on AWS with Amazon S3,
-        Name: MediaAndEntertainmentSolutions,
+        Name: Object {
+          Ref: AWS::StackName,
+        },
         Tags: Object {
           SolutionId: SO0109,
         },
@@ -492,7 +504,17 @@ Object {
         AutoConfigurationEnabled: true,
         CWEMonitorEnabled: true,
         OpsCenterEnabled: true,
-        ResourceGroupName: AWS_AppRegistry_Application-LiveStreamingOnAwsWithAmazonS3,
+        ResourceGroupName: Object {
+          Fn::Join: Array [
+            ,
+            Array [
+              AWS_AppRegistry_Application-live-streaming-on-aws-with-amazon-s3-,
+              Object {
+                Ref: AWS::StackName,
+              },
+            ],
+          ],
+        },
         Tags: Array [
           Object {
             Key: SolutionId,
@@ -512,9 +534,9 @@ Object {
             Fn::Join: Array [
               ,
               Array [
-                LiveStreamingCachePolicy36FCA70B-,
+                CachePolicy-,
                 Object {
-                  Ref: AWS::Region,
+                  Ref: AWS::StackName,
                 },
               ],
             ],
