@@ -18,7 +18,7 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.126.0",
+    "@aws-cdk/assert": "1.187.0",
     "@types/jest": "26.0.19",
     "@types/node": "10.17.27",
     "aws-cdk": "^1.126.0",
@@ -30,12 +30,12 @@
   "dependencies": {
     "@aws-cdk/aws-cloudwatch": "1.126.0",
     "@aws-cdk/aws-lambda": "1.126.0",
-    "@aws-cdk/aws-medialive": "1.126.0",
-    "@aws-cdk/aws-s3": "1.126.0",
-    "@aws-cdk/aws-servicecatalogappregistry": "1.126.0",
-    "@aws-cdk/aws-applicationinsights": "1.126.0",
+    "@aws-cdk/aws-medialive": "1.187.0",
+    "@aws-cdk/aws-s3": "1.187.0",
+    "@aws-cdk/aws-servicecatalogappregistry": "1.187.0",
+    "@aws-cdk/aws-applicationinsights": "1.187.0",
     "@aws-cdk/core": "1.126.0",
-    "@aws-solutions-constructs/aws-cloudfront-s3": "1.126.0",
+    "@aws-solutions-constructs/aws-cloudfront-s3": "1.181.1",
     "cdk-nag": "^1.0.0",
     "source-map-support": "0.5.19"
   }
