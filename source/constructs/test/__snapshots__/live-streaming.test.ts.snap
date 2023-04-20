@@ -538,6 +538,10 @@ Object {
                 Object {
                   Ref: AWS::StackName,
                 },
+                -,
+                Object {
+                  Ref: AWS::Region,
+                },
               ],
             ],
           },
@@ -729,6 +733,13 @@ Object {
             },
           ],
         },
+        OwnershipControls: Object {
+          Rules: Array [
+            Object {
+              ObjectOwnership: ObjectWriter,
+            },
+          ],
+        },
         PublicAccessBlockConfiguration: Object {
           BlockPublicAcls: true,
           BlockPublicPolicy: true,
@@ -815,6 +826,13 @@ Object {
             Id: EntireBucket,
           },
         ],
+        OwnershipControls: Object {
+          Rules: Array [
+            Object {
+              ObjectOwnership: ObjectWriter,
+            },
+          ],
+        },
         PublicAccessBlockConfiguration: Object {
           BlockPublicAcls: true,
           BlockPublicPolicy: true,
@@ -943,6 +961,13 @@ Object {
               ServerSideEncryptionByDefault: Object {
                 SSEAlgorithm: AES256,
               },
+            },
+          ],
+        },
+        OwnershipControls: Object {
+          Rules: Array [
+            Object {
+              ObjectOwnership: ObjectWriter,
             },
           ],
         },
