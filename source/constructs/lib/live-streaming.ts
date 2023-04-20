@@ -150,7 +150,7 @@ export class LiveStreaming extends cdk.Stack {
          * OriginAccessIdentity which is used to restrict access to S3 from CloudFront.
          */
         // Need Unique name for each Cache Policy. 
-        const cachePolicyName = `CachePolicy-${cdk.Aws.STACK_NAME}`;
+        const cachePolicyName = `CachePolicy-${cdk.Aws.STACK_NAME}-${cdk.Aws.REGION}`;
 
         const cachePolicy = new CachePolicy(this, `CachePolicy`, {
             cachePolicyName: cachePolicyName,
@@ -170,13 +170,16 @@ export class LiveStreaming extends cdk.Stack {
               })
             },
             bucketProps: {
-                versioned: false
+                versioned: false,
+                objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
             },
             loggingBucketProps: {
-                versioned: false
+                versioned: false,
+                objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
             },
             cloudFrontLoggingBucketProps: {
-                versioned: false
+                versioned: false,
+                objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
             },
             insertHttpSecurityHeaders: false
         });
