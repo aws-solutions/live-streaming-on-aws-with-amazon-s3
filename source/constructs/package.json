@@ -36,7 +36,7 @@
     "@aws-cdk/aws-servicecatalogappregistry": "1.126.0",
     "@aws-cdk/core": "1.126.0",
     "@aws-solutions-constructs/aws-cloudfront-s3": "1.126.0",
-    "cdk-nag": "^1.0.0",
+    "cdk-nag": "^2.26.4",
     "source-map-support": "0.5.19"
   }
 }
