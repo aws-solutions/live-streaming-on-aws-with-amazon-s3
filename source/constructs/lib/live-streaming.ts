@@ -11,21 +11,21 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import * as cdk from '@aws-cdk/core';
-import * as iam from '@aws-cdk/aws-iam';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as s3 from '@aws-cdk/aws-s3';
+import * as cdk from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { NagSuppressions } from 'cdk-nag';
-import * as appreg from '@aws-cdk/aws-servicecatalogappregistry';
-import * as applicationinsights from '@aws-cdk/aws-applicationinsights';
+import * as appreg from '@aws-cdk/aws-servicecatalogappregistry-alpha';
+import { Construct } from 'constructs';
 
 //Solution construct
 import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
-import { CachePolicy } from '@aws-cdk/aws-cloudfront';
+import { CachePolicy } from 'aws-cdk-lib/aws-cloudfront';
 
 
 export class LiveStreaming extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
         /**
          * CloudFormation Template Descrption
@@ -135,11 +135,11 @@ export class LiveStreaming extends cdk.Stack {
             }
         };
         /**
-         * Mapping for sending anonymous metrics to AWS Solution Builders API
+         * Mapping for sending anonymized metrics to AWS Solution Builders API
          */
-        new cdk.CfnMapping(this, 'AnonymousData', { // NOSONAR
+        new cdk.CfnMapping(this, 'AnonymizedData', { // NOSONAR
             mapping: {
-                SendAnonymousData: {
+                SendAnonymizedData: {
                     Data: 'Yes'
                 }
             }
@@ -170,15 +170,12 @@ export class LiveStreaming extends cdk.Stack {
               })
             },
             bucketProps: {
-                versioned: false,
                 objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
             },
             loggingBucketProps: {
-                versioned: false,
                 objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
             },
             cloudFrontLoggingBucketProps: {
-                versioned: false,
                 objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
             },
             insertHttpSecurityHeaders: false
@@ -353,7 +350,7 @@ export class LiveStreaming extends cdk.Stack {
           );
 
         const customResourceLambda = new lambda.Function(this, 'CustomResource', {
-            runtime: lambda.Runtime.NODEJS_14_X,
+            runtime: lambda.Runtime.NODEJS_16_X,
             handler: 'index.handler',
             description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
             environment: {
@@ -382,6 +379,16 @@ export class LiveStreaming extends cdk.Stack {
                 }]
             }
         };
+        //cdk_nag
+        NagSuppressions.addResourceSuppressions(
+            customResourceLambda,
+            [
+                {
+                    id: 'AwsSolutions-L1',
+                    reason: 'nodejs 18 lambda runtime does not support javascript SDK v2'
+                }
+            ]
+        );
         /**
          * custom resource, this will configure and deploy a mediaLive Input and SG
          */
@@ -434,7 +441,7 @@ export class LiveStreaming extends cdk.Stack {
         /**
          * custom resource, this will configure and deploy a mediaLive Channel
          */
-        new cdk.CustomResource(this, 'AnonymousMetric', { // NOSONAR
+        new cdk.CustomResource(this, 'AnonymizedMetric', { // NOSONAR
             serviceToken: customResourceLambda.functionArn,
             properties: {
                 SolutionId: `${solutionId}`,
@@ -444,7 +451,7 @@ export class LiveStreaming extends cdk.Stack {
                 Cidr: inputCIDR.valueAsString,
                 EncodingProfile: encodingProfile.valueAsString,
                 ChannelStart: channelStart.valueAsString,
-                SendAnonymousMetric: cdk.Fn.findInMap('AnonymousData', 'SendAnonymousData', 'Data')
+                SendAnonymizedMetric: cdk.Fn.findInMap('AnonymizedData', 'SendAnonymizedData', 'Data')
             }
         });
 
@@ -452,39 +459,27 @@ export class LiveStreaming extends cdk.Stack {
         /**
         * AppRegistry
         */
-        const applicationName = `live-streaming-on-aws-with-amazon-s3-${cdk.Aws.STACK_NAME}`;
+        const applicationName = `live-streaming-on-aws-with-amazon-s3-${cdk.Aws.REGION}-${cdk.Aws.ACCOUNT_ID}-${cdk.Aws.STACK_NAME}`;
         const attributeGroup = new appreg.AttributeGroup(this, 'AppRegistryAttributeGroup', {
-            attributeGroupName: cdk.Aws.STACK_NAME,
-            description: solutionName,
+            attributeGroupName: `${cdk.Aws.REGION}-${cdk.Aws.STACK_NAME}`,
+            description: 'Attribute group for solution information.',
             attributes: {
-                ApplicationType: 'AWS Solution',
-                Author: 'Media and Entertainment',
-                Team: 'Media and Entertainment',
-                Version: '%%VERSION%%',
-                SolutionID: solutionId,
-                SolutionName: solutionName
+                ApplicationType: 'AWS-Solutions',
+                SolutionVersion: '%%VERSION%%',
+                SolutionID: solutionId
             }
         });
         const appRegistry = new appreg.Application(this, 'AppRegistryApp', {
             applicationName: applicationName,
             description: `Service Catalog application to track and manage all your resources. The SolutionId is ${solutionId} and SolutionVersion is %%VERSION%%.`
         });
-        appRegistry.associateStack(this);
-        cdk.Tags.of(appRegistry).add('SolutionName', solutionName);
-        cdk.Tags.of(appRegistry).add('SolutionVersion', '%%VERSION%%');
-        cdk.Tags.of(appRegistry).add('ApplicationType', 'AWS-Solutions');
-        cdk.Tags.of(appRegistry).add('SolutionDomain', 'MediaAndEntertainment');
+        appRegistry.associateApplicationWithStack(this);
+        cdk.Tags.of(appRegistry).add('Solutions:SolutionName', solutionName);
+        cdk.Tags.of(appRegistry).add('Solutions:SolutionVersion', '%%VERSION%%');
+        cdk.Tags.of(appRegistry).add('Solutions:ApplicationType', 'AWS-Solutions');
+        cdk.Tags.of(appRegistry).add('Solutions:SolutionID', solutionId);
 
-        appRegistry.node.addDependency(attributeGroup);
-        appRegistry.associateAttributeGroup(attributeGroup);
-
-        const appInsights = new applicationinsights.CfnApplication(this, 'ApplicationInsightsApp', {
-            resourceGroupName: `AWS_AppRegistry_Application-${applicationName}`,
-            autoConfigurationEnabled: true,
-            cweMonitorEnabled: true,
-            opsCenterEnabled: true
-        });
-        appInsights.node.addDependency(appRegistry);
+        attributeGroup.associateWith(appRegistry);
 
         /**
          * Outputs

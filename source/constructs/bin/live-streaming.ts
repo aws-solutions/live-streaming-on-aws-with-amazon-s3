@@ -13,12 +13,17 @@
  *********************************************************************************************************************/
 
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib';
+import { DefaultStackSynthesizer } from 'aws-cdk-lib';
 import { LiveStreaming } from '../lib/live-streaming';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new cdk.App();
-new LiveStreaming(app, 'LiveStreaming'); // NOSONAR
+new LiveStreaming(app, 'LiveStreaming', { // NOSONAR
+  synthesizer: new DefaultStackSynthesizer({
+    generateBootstrapVersionRule: false
+  })
+});
 
  //cdk nag
  cdk.Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
