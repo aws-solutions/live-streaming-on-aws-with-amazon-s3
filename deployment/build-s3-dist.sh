@@ -2,17 +2,15 @@
 #
 # This script will perform the following tasks:
 #   1. Remove any old dist files from previous runs.
-#   2. Install dependencies for the cdk-solution-helper; responsible for
-#      converting standard 'cdk synth' output into solution assets.
-#   3. Build and synthesize your CDK project.
-#   4. Run the cdk-solution-helper on template outputs and organize
+#   2. Build and synthesize your CDK project.
+#   3. Run the cdk-solution-helper on template outputs and organize
 #      those outputs into the /global-s3-assets folder.
-#   5. Organize source code artifacts into the /regional-s3-assets folder.
-#   6. Remove any temporary files used for staging.
+#   4. Organize source code artifacts into the /regional-s3-assets folder.
+#   5. Remove any temporary files used for staging.
 #
 # This script should be run from the repo's deployment directory
 # cd deployment
-# ./build-s3-dist.sh source-bucket-base-name solution-name version-code template-bucket-name
+# ./build-s3-dist.sh source-bucket-base-name solution-name version-code
 #
 # Parameters:
 #  - source-bucket-base-name: Name for the S3 bucket location where the template will source the Lambda
@@ -55,20 +53,15 @@ rm -rf $staging_dist_dir
 mkdir -p $staging_dist_dir
 
 echo "------------------------------------------------------------------------------"
-echo "[Init] Install dependencies for the cdk-solution-helper"
-echo "------------------------------------------------------------------------------"
-cd $template_dir/cdk-solution-helper
-npm install --production
-
-echo "------------------------------------------------------------------------------"
 echo "[Synth] CDK Project"
 echo "------------------------------------------------------------------------------"
-# Make sure user has the newest CDK version
-npm uninstall -g aws-cdk && npm install -g aws-cdk@1
 
 cd $source_dir/constructs
 npm install
-cdk synth --output=$staging_dist_dir
+
+npm run cdk -- context --clear
+npm run synth -- --output=$staging_dist_dir
+
 if [ $? -ne 0 ]
 then
     echo "******************************************************************************"

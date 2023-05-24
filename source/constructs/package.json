@@ -1,6 +1,10 @@
 {
   "name": "live-streaming-on-aws-with-amazon-s3",
-  "version": "3.1.0",
+  "version": "3.2.0",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/solutions"
+  },
   "description": "cdk construct for the live streaming with amazon s3 solution",
   "bin": {
     "live-stream": "bin/live-streaming.js"
@@ -9,34 +13,32 @@
     "type": "git",
     "url": "https://github.com/awslabs/live-streaming-on-aws-with-amazon-s3"
   },
-  "author": "aws solution builders",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest --coverage --updateSnapshot",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "synth": "cdk synth -q"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.126.0",
-    "@types/jest": "26.0.19",
-    "@types/node": "10.17.27",
-    "aws-cdk": "^1.126.0",
-    "jest": "^26.6.3",
-    "ts-jest": "26.4.4",
-    "ts-node": "9.1.1",
-    "typescript": "4.1.3"
+    "@aws-cdk/assert": "2.68.0",
+    "@types/jest": "29.5.1",
+    "@types/node": "20.1.2",
+    "aws-cdk": "^2.79.0",
+    "aws-cdk-lib": "2.79.0",
+    "constructs": "10.2.17",
+    "jest": "^29.5.0",
+    "ts-jest": "29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.4"
   },
   "dependencies": {
-    "@aws-cdk/aws-applicationinsights": "1.126.0",
-    "@aws-cdk/aws-cloudwatch": "1.126.0",
-    "@aws-cdk/aws-lambda": "1.126.0",
-    "@aws-cdk/aws-medialive": "1.126.0",
-    "@aws-cdk/aws-s3": "1.126.0",
-    "@aws-cdk/aws-servicecatalogappregistry": "1.126.0",
-    "@aws-cdk/core": "1.126.0",
-    "@aws-solutions-constructs/aws-cloudfront-s3": "1.126.0",
-    "cdk-nag": "^1.0.0",
+    "@aws-cdk/aws-servicecatalogappregistry-alpha": "2.79.0-alpha.0",
+    "@aws-solutions-constructs/aws-cloudfront-s3": "2.39.0",
+    "aws-cdk-lib": "2.79.0",
+    "cdk-nag": "^2.27.0",
+    "constructs": "10.2.17",
     "source-map-support": "0.5.19"
   }
 }
