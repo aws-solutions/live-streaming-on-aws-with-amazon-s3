@@ -38,7 +38,7 @@ const create = async (event, config) => {
           Id = responseData.Id;
           break;
         default:
-          throw new Error('Resource is not defiend');
+          throw new Error('Resource is not defined');
       }
       break;
 
@@ -55,12 +55,12 @@ const create = async (event, config) => {
       responseData.UUID = uuid.v4();
       break;
     case ('AnonymizedMetric'):
-      if (config.SendAnonymizedMetric) {
+      if (config.SendAnonymizedMetric === 'Yes') {
         await metrics.send(config);
       }
       break;
     default:
-      throw new Error('Resource is not defiend');
+      throw new Error('Resource is not defined');
   }
   return [responseData, Id];
 };
