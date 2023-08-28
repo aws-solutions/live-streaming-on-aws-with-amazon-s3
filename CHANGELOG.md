@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1] - 2023-08-28
+
+### Added
+
+- Unit tests for custom-resource/index.js file
+
+### Changed
+
+- Upgraded lambda runtimes to NodeJS 18 and AWS SDK v3
+- Updated npm packages
+
+### Fixed
+
+- Issue where Anonymized data was sent even when CfnMapping is specified as No
+
 ## [3.2.0] - 2023-05-18
 
 ### Changed

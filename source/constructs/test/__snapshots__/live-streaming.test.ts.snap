@@ -1060,14 +1060,6 @@ exports[`LiveStreaming Stack Test 1`] = `
         CustomResourceRoleAB1EF463,
       ],
       Metadata: {
-        cdk_nag: {
-          rules_to_suppress: [
-            {
-              id: AwsSolutions-L1,
-              reason: nodejs 18 lambda runtime does not support javascript SDK v2,
-            },
-          ],
-        },
         cfn_nag: {
           rules_to_suppress: [
             {
@@ -1090,7 +1082,7 @@ exports[`LiveStreaming Stack Test 1`] = `
           S3Bucket: {
             Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region},
           },
-          S3Key: 7979c599bcee0b5200b4cc720683b7858f1dc21b62e0c86d08ee2c2f226117b5.zip,
+          S3Key: [HASH REMOVED].zip,
         },
         Description: CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint,
         Environment: {
@@ -1105,7 +1097,7 @@ exports[`LiveStreaming Stack Test 1`] = `
             Arn,
           ],
         },
-        Runtime: nodejs16.x,
+        Runtime: nodejs18.x,
         Tags: [
           {
             Key: SolutionId,
@@ -1199,6 +1191,34 @@ exports[`LiveStreaming Stack Test 1`] = `
                 Fn::GetAtt: [
                   MediaLiveRole1149D189,
                   Arn,
+                ],
+              },
+            },
+            {
+              Action: [
+                logs:CreateLogGroup,
+                logs:CreateLogStream,
+                logs:PutLogEvents,
+              ],
+              Effect: Allow,
+              Resource: {
+                Fn::Join: [
+                  ,
+                  [
+                    arn:,
+                    {
+                      Ref: AWS::Partition,
+                    },
+                    :logs:,
+                    {
+                      Ref: AWS::Region,
+                    },
+                    :,
+                    {
+                      Ref: AWS::AccountId,
+                    },
+                    :log-group:/aws/lambda/*,
+                  ],
                 ],
               },
             },

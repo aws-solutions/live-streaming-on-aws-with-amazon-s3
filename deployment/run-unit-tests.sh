@@ -30,8 +30,7 @@ run_javascript_test() {
   cd $component_path
 
   # install jest
-  npm install -g jest
-  npm install --save-dev jest
+  npm install --production=false
   # run unit tests
   npm test
 

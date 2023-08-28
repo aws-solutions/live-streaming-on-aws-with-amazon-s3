@@ -10,7 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-const AWS = require('aws-sdk');
+const {
+    MediaLiveClient,
+    CreateChannelCommand,
+    StartChannelCommand,
+    StopChannelCommand,
+    DeleteChannelCommand,
+    DescribeChannelCommand,
+    DescribeInputCommand,
+    DeleteInputCommand,
+    DescribeInputSecurityGroupCommand,
+    DeleteInputSecurityGroupCommand,
+    CreateInputSecurityGroupCommand,
+    CreateInputCommand
+} = require('@aws-sdk/client-medialive');
+const { SSM } = require('@aws-sdk/client-ssm');
 
 /**
  * Description: creates a medialive device input (Elemental Link)
@@ -21,7 +35,7 @@ const AWS = require('aws-sdk');
 */
 const createDeviceInput = async (config) => {
     console.log('Creating Link Input.....');
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -37,7 +51,7 @@ const createDeviceInput = async (config) => {
             ],
             Tags: {'SolutionId': 'SO0109'}
         };
-        let data = await medialive.createInput(params).promise();
+        let data = await medialive.send(new CreateInputCommand(params));
         responseData = {
             Id: data.Input.Id,
             EndPoint: 'Push InputType only'
@@ -59,7 +73,7 @@ const createDeviceInput = async (config) => {
 */
 const createRtpInput = async (config) => {
     console.log('Creating RTP Input.....');
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -72,14 +86,14 @@ const createRtpInput = async (config) => {
                 Cidr: config.Cidr
             }]
         };
-        data = await medialive.createInputSecurityGroup(params).promise();
+        data = await medialive.send(new CreateInputSecurityGroupCommand(params));
         params = {
             InputSecurityGroups: [data.SecurityGroup.Id],
             Name: config.StreamName,
             Type: config.Type,
             Tags: {'SolutionId': 'SO0109'}
         };
-        data = await medialive.createInput(params).promise();
+        data = await medialive.send(new CreateInputCommand(params));
         responseData = {
             Id: data.Input.Id,
             EndPoint: data.Input.Destinations[0].Url
@@ -101,7 +115,7 @@ const createRtpInput = async (config) => {
 */
 const createRtmpInput = async (config) => {
     console.log('Creating RTMP Input.....');
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -114,7 +128,7 @@ const createRtmpInput = async (config) => {
                 Cidr: config.Cidr
             }]
         };
-        data = await medialive.createInputSecurityGroup(params).promise();
+        data = await medialive.send(new CreateInputSecurityGroupCommand(params));
         params = {
             InputSecurityGroups: [data.SecurityGroup.Id],
             Name: config.StreamName,
@@ -125,7 +139,7 @@ const createRtmpInput = async (config) => {
             ],
             Tags: {'SolutionId': 'SO0109'}
         };
-        data = await medialive.createInput(params).promise();
+        data = await medialive.send(new CreateInputCommand(params));
         responseData = {
             Id: data.Input.Id,
             EndPoint: data.Input.Destinations[0].Url,
@@ -148,11 +162,11 @@ const createRtmpInput = async (config) => {
 */
 const createUrlInput = async (config) => {
     console.log('Creating URL_PULL Input.....');
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
-    const ssm = new AWS.SSM({
+    const ssm = new SSM({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -180,13 +194,13 @@ const createUrlInput = async (config) => {
                     Value: config.PullPass,
                     Overwrite: true
                 };
-                await ssm.putParameter(ssmParams).promise();
+                await ssm.putParameter(ssmParams);
             } catch (err) {
                 console.error(err);
                 throw err;
             }
         }
-        data = await medialive.createInput(params).promise();
+        data = await medialive.send(new CreateInputCommand(params));
         responseData = {
             Id: data.Input.Id,
             EndPoint: 'Push InputType only'
@@ -207,7 +221,7 @@ const createUrlInput = async (config) => {
 const deleteInput = async (InputId) => {
     console.log('Deleting Input.....');
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -217,8 +231,19 @@ const deleteInput = async (InputId) => {
         params = {
             InputId: InputId
         };
-        data = await medialive.describeInput(params).promise();
-        await medialive.deleteInput(params).promise();
+        data = await medialive.send(new DescribeInputCommand(params));
+        let state = data.State;
+        let retry = 5;
+        while (state !== 'DETACHED') {
+            await sleep(6000);
+            data = await medialive.send(new DescribeInputCommand(params));
+            state = data.State;
+            retry = retry - 1;
+            if (retry === 0 && state !== 'DETACHED') {
+                throw new Error(`Failed to delete Input, state: ${state} is not DETACHED`);
+            }
+        }
+        await medialive.send(new DeleteInputCommand(params));
         if (data.SecurityGroups && data.SecurityGroups.length !== 0 ) {
             params = {
                  InputSecurityGroupId: data.SecurityGroups[0]
@@ -227,18 +252,18 @@ const deleteInput = async (InputId) => {
             * When the input is deleted the SG is detached however it can take a few seconds for the SG state
             * to change from IN_USE to IDLE
             */
-            let state = '';
-            let retry = 5;
+            state = '';
+            retry = 5;
             while (state !== 'IDLE') {
                 await sleep(6000);
-                data = await medialive.describeInputSecurityGroup(params).promise();
+                data = await medialive.send(new DescribeInputSecurityGroupCommand(params));
                 state = data.State;
                 retry = retry -1;
                 if (retry === 0 && state !== 'IDLE') {
                     throw new Error(`Failed to delete Security Group, state: ${state} is not IDLE`);
                 }
             }
-            await medialive.deleteInputSecurityGroup(params).promise();
+            await medialive.send(new DeleteInputSecurityGroupCommand(params));
         }
     } catch (err) {
         console.error(err);
@@ -260,7 +285,7 @@ const deleteInput = async (InputId) => {
  * @param {string} config.SoltionId used to tag the medialive channel
  */
 const createChannel = async (config) => {
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -323,11 +348,7 @@ const createChannel = async (config) => {
                 throw new Error('EncodingProfile is not defined');
         }
         console.log(`Creating Channel with a ${config.EncodingProfile} profile`);
-        data = await medialive.createChannel(params).promise();
-        params = {
-            ChannelId: data.Channel.Id
-        }
-        await medialive.waitFor('channelCreated',params).promise();
+        data = await medialive.send(new CreateChannelCommand(params));
         responseData = {
             ChannelId: data.Channel.Id
         };
@@ -346,7 +367,8 @@ const createChannel = async (config) => {
  */
 const startChannel = async (config) => {
     console.log('Starting Channel.....');
-    const medialive = new AWS.MediaLive({
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -354,7 +376,19 @@ const startChannel = async (config) => {
         let params = {
             ChannelId: config.ChannelId
         };
-        await medialive.startChannel(params).promise();
+        let data = await medialive.send(new DescribeChannelCommand(params));
+        let state = data.State;
+        let retry = 5;
+        while (state !== 'IDLE') {
+            await sleep(6000);
+            data = await medialive.send(new DescribeChannelCommand(params));
+            state = data.State;
+            retry = retry - 1;
+            if (retry === 0 && state !== 'IDLE') {
+                throw new Error(`Failed to start channel, state: ${state} is not IDLE`);
+            }
+        }
+        await medialive.send(new StartChannelCommand(params));
     } catch (err) {
         console.error(err);
         throw err;
@@ -369,7 +403,7 @@ const startChannel = async (config) => {
  */
 const deleteChannel = async (ChannelId) => {
     console.log('Deleting Channel.....');
-    const medialive = new AWS.MediaLive({
+    const medialive = new MediaLiveClient({
         region: process.env.AWS_REGION,
         customUserAgent: process.env.SOLUTION_IDENTIFIER
     });
@@ -378,10 +412,8 @@ const deleteChannel = async (ChannelId) => {
         params = {
             ChannelId: ChannelId
         };
-        await medialive.stopChannel(params).promise();
-        await medialive.waitFor('channelStopped',params).promise();
-        await medialive.deleteChannel(params).promise();
-        await medialive.waitFor('channelDeleted',params).promise();
+        await medialive.send(new StopChannelCommand(params));
+        await medialive.send(new DeleteChannelCommand(params));
     } catch (err) {
         console.error(err);
         throw err;

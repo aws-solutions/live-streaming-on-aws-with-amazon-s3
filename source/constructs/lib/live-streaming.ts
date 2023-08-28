@@ -333,6 +333,14 @@ export class LiveStreaming extends cdk.Stack {
                 new iam.PolicyStatement({
                     resources: [mediaLiveRole.roleArn],
                     actions: ['iam:PassRole']
+                }),
+                new iam.PolicyStatement({
+                    resources: [`arn:${cdk.Aws.PARTITION}:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:/aws/lambda/*`],
+                    actions: [
+                        'logs:CreateLogGroup',
+                        'logs:CreateLogStream',
+                        'logs:PutLogEvents'
+                    ]
                 })
             ]
         });
@@ -350,7 +358,7 @@ export class LiveStreaming extends cdk.Stack {
           );
 
         const customResourceLambda = new lambda.Function(this, 'CustomResource', {
-            runtime: lambda.Runtime.NODEJS_16_X,
+            runtime: lambda.Runtime.NODEJS_18_X,
             handler: 'index.handler',
             description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
             environment: {
@@ -379,16 +387,6 @@ export class LiveStreaming extends cdk.Stack {
                 }]
             }
         };
-        //cdk_nag
-        NagSuppressions.addResourceSuppressions(
-            customResourceLambda,
-            [
-                {
-                    id: 'AwsSolutions-L1',
-                    reason: 'nodejs 18 lambda runtime does not support javascript SDK v2'
-                }
-            ]
-        );
         /**
          * custom resource, this will configure and deploy a mediaLive Input and SG
          */
