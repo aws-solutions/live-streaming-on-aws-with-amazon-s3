@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- [@babel/traverse vulnerability](https://github.com/advisories/GHSA-67hx-6x53-jw92)
+- Security updates
 
 ## [3.2.1] - 2023-08-28
 
