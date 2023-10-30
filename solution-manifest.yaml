@@ -1,0 +1,7 @@
+id: SO0109
+name: live-streaming-on-aws-with-amazon-s3
+version: v3.2.2
+cloudformation_templates:
+  - template: live-streaming-on-aws-with-amazon-s3.template
+    main_template: true
+    
