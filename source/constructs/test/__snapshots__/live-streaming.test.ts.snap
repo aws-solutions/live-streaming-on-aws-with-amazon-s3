@@ -1440,6 +1440,18 @@ exports[`LiveStreaming Stack Test 1`] = `
               },
             },
             {
+              Action: s3:PutObject,
+              Condition: {
+                StringNotEquals: {
+                  s3:ResourceAccount: {
+                    Ref: AWS::AccountId,
+                  },
+                },
+              },
+              Effect: Allow,
+              Resource: *,
+            },
+            {
               Action: [
                 ssm:DescribeParameters,
                 ssm:GetParameter,
