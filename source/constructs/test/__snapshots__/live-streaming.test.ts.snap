@@ -86,40 +86,6 @@ exports[`LiveStreaming Stack Test 1`] = `
     },
   },
   Outputs: {
-    AppRegistryConsole: {
-      Description: AppRegistry,
-      Export: {
-        Name: {
-          Fn::Join: [
-            ,
-            [
-              {
-                Ref: AWS::StackName,
-              },
-              -AppRegistry,
-            ],
-          ],
-        },
-      },
-      Value: {
-        Fn::Join: [
-          ,
-          [
-            https://,
-            {
-              Ref: AWS::Region,
-            },
-            .console.aws.amazon.com/servicecatalog/home?#applications/,
-            {
-              Fn::GetAtt: [
-                AppRegistryApp5349BE86,
-                Id,
-              ],
-            },
-          ],
-        ],
-      },
-    },
     BucketMetrics: {
       Description: Bucket Request Metrics,
       Export: {
@@ -219,28 +185,6 @@ exports[`LiveStreaming Stack Test 1`] = `
             },
             /stream/index.m3u8,
           ],
-        ],
-      },
-    },
-    MediaLiveChannelId: {
-      Description: MediaLive Channel Id,
-      Export: {
-        Name: {
-          Fn::Join: [
-            ,
-            [
-              {
-                Ref: AWS::StackName,
-              },
-              -MediaLiveChannelId,
-            ],
-          ],
-        },
-      },
-      Value: {
-        Fn::GetAtt: [
-          MediaLiveChannel,
-          ChannelId,
         ],
       },
     },
@@ -397,98 +341,6 @@ exports[`LiveStreaming Stack Test 1`] = `
       Type: AWS::CloudFormation::CustomResource,
       UpdateReplacePolicy: Delete,
     },
-    AppRegistryApp5349BE86: {
-      Properties: {
-        Description: Service Catalog application to track and manage all your resources. The SolutionId is SO0109 and SolutionVersion is %%VERSION%%.,
-        Name: {
-          Fn::Join: [
-            ,
-            [
-              live-streaming-on-aws-with-amazon-s3-,
-              {
-                Ref: AWS::Region,
-              },
-              -,
-              {
-                Ref: AWS::AccountId,
-              },
-              -,
-              {
-                Ref: AWS::StackName,
-              },
-            ],
-          ],
-        },
-        Tags: {
-          SolutionId: SO0109,
-          Solutions:ApplicationType: AWS-Solutions,
-          Solutions:SolutionID: SO0109,
-          Solutions:SolutionName: Live Streaming on AWS with Amazon S3,
-          Solutions:SolutionVersion: %%VERSION%%,
-        },
-      },
-      Type: AWS::ServiceCatalogAppRegistry::Application,
-    },
-    AppRegistryAssociation: {
-      Properties: {
-        Application: {
-          Fn::GetAtt: [
-            AppRegistryApp5349BE86,
-            Id,
-          ],
-        },
-        Resource: {
-          Ref: AWS::StackId,
-        },
-        ResourceType: CFN_STACK,
-      },
-      Type: AWS::ServiceCatalogAppRegistry::ResourceAssociation,
-    },
-    AppRegistryAttributeGroup7AF07446: {
-      Properties: {
-        Attributes: {
-          ApplicationType: AWS-Solutions,
-          SolutionID: SO0109,
-          SolutionVersion: %%VERSION%%,
-        },
-        Description: Attribute group for solution information.,
-        Name: {
-          Fn::Join: [
-            ,
-            [
-              {
-                Ref: AWS::Region,
-              },
-              -,
-              {
-                Ref: AWS::StackName,
-              },
-            ],
-          ],
-        },
-        Tags: {
-          SolutionId: SO0109,
-        },
-      },
-      Type: AWS::ServiceCatalogAppRegistry::AttributeGroup,
-    },
-    AppRegistryAttributeGroupApplicationAttributeGroupAssociation33c998cf729fE18E7E86: {
-      Properties: {
-        Application: {
-          Fn::GetAtt: [
-            AppRegistryApp5349BE86,
-            Id,
-          ],
-        },
-        AttributeGroup: {
-          Fn::GetAtt: [
-            AppRegistryAttributeGroup7AF07446,
-            Id,
-          ],
-        },
-      },
-      Type: AWS::ServiceCatalogAppRegistry::AttributeGroupAssociation,
-    },
     CachePolicy26D8A535: {
       Properties: {
         CachePolicyConfig: {
@@ -634,18 +486,14 @@ exports[`LiveStreaming Stack Test 1`] = `
                 ],
               },
               Id: LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB,
+              OriginAccessControlId: {
+                Fn::GetAtt: [
+                  CloudFrontToS3CloudFrontOacFB5D4E73,
+                  Id,
+                ],
+              },
               S3OriginConfig: {
-                OriginAccessIdentity: {
-                  Fn::Join: [
-                    ,
-                    [
-                      origin-access-identity/cloudfront/,
-                      {
-                        Ref: CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F,
-                      },
-                    ],
-                  ],
-                },
+                OriginAccessIdentity: ,
               },
             },
           ],
@@ -659,13 +507,37 @@ exports[`LiveStreaming Stack Test 1`] = `
       },
       Type: AWS::CloudFront::Distribution,
     },
-    CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F: {
+    CloudFrontToS3CloudFrontOacFB5D4E73: {
       Properties: {
-        CloudFrontOriginAccessIdentityConfig: {
-          Comment: Identity for LiveStreamingCloudFrontToS3CloudFrontDistributionOrigin1940508AB,
+        OriginAccessControlConfig: {
+          Description: Origin access control provisioned by aws-cloudfront-s3,
+          Name: {
+            Fn::Join: [
+              ,
+              [
+                aws-cloudfront-s3-CloutToS3-,
+                {
+                  Fn::Select: [
+                    2,
+                    {
+                      Fn::Split: [
+                        /,
+                        {
+                          Ref: AWS::StackId,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+          OriginAccessControlOriginType: s3,
+          SigningBehavior: always,
+          SigningProtocol: sigv4,
         },
       },
-      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity,
+      Type: AWS::CloudFront::OriginAccessControl,
     },
     CloudFrontToS3CloudfrontLoggingBucket8350BE9B: {
       DeletionPolicy: Retain,
@@ -675,14 +547,6 @@ exports[`LiveStreaming Stack Test 1`] = `
             {
               id: AwsSolutions-S1,
               reason: Used to store access logs for other buckets,
-            },
-          ],
-        },
-        cfn_nag: {
-          rules_to_suppress: [
-            {
-              id: W35,
-              reason: This S3 bucket is used as the access logging bucket for CloudFront Distribution,
             },
           ],
         },
@@ -697,6 +561,11 @@ exports[`LiveStreaming Stack Test 1`] = `
               },
             },
           ],
+        },
+        LoggingConfiguration: {
+          DestinationBucketName: {
+            Ref: CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05,
+          },
         },
         OwnershipControls: {
           Rules: [
@@ -723,6 +592,130 @@ exports[`LiveStreaming Stack Test 1`] = `
       },
       Type: AWS::S3::Bucket,
       UpdateReplacePolicy: Retain,
+    },
+    CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05: {
+      DeletionPolicy: Retain,
+      Metadata: {
+        cfn_nag: {
+          rules_to_suppress: [
+            {
+              id: W35,
+              reason: This S3 bucket is used as the access logging bucket for another bucket,
+            },
+          ],
+        },
+      },
+      Properties: {
+        BucketEncryption: {
+          ServerSideEncryptionConfiguration: [
+            {
+              ServerSideEncryptionByDefault: {
+                SSEAlgorithm: AES256,
+              },
+            },
+          ],
+        },
+        PublicAccessBlockConfiguration: {
+          BlockPublicAcls: true,
+          BlockPublicPolicy: true,
+          IgnorePublicAcls: true,
+          RestrictPublicBuckets: true,
+        },
+        Tags: [
+          {
+            Key: SolutionId,
+            Value: SO0109,
+          },
+        ],
+        VersioningConfiguration: {
+          Status: Enabled,
+        },
+      },
+      Type: AWS::S3::Bucket,
+      UpdateReplacePolicy: Retain,
+    },
+    CloudFrontToS3CloudfrontLoggingBucketAccessLogPolicy2AAA13DA: {
+      Properties: {
+        Bucket: {
+          Ref: CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05,
+        },
+        PolicyDocument: {
+          Statement: [
+            {
+              Action: s3:*,
+              Condition: {
+                Bool: {
+                  aws:SecureTransport: false,
+                },
+              },
+              Effect: Deny,
+              Principal: {
+                AWS: *,
+              },
+              Resource: [
+                {
+                  Fn::GetAtt: [
+                    CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05,
+                    Arn,
+                  ],
+                },
+                {
+                  Fn::Join: [
+                    ,
+                    [
+                      {
+                        Fn::GetAtt: [
+                          CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05,
+                          Arn,
+                        ],
+                      },
+                      /*,
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              Action: s3:PutObject,
+              Condition: {
+                ArnLike: {
+                  aws:SourceArn: {
+                    Fn::GetAtt: [
+                      CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+                      Arn,
+                    ],
+                  },
+                },
+                StringEquals: {
+                  aws:SourceAccount: {
+                    Ref: AWS::AccountId,
+                  },
+                },
+              },
+              Effect: Allow,
+              Principal: {
+                Service: logging.s3.amazonaws.com,
+              },
+              Resource: {
+                Fn::Join: [
+                  ,
+                  [
+                    {
+                      Fn::GetAtt: [
+                        CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05,
+                        Arn,
+                      ],
+                    },
+                    /*,
+                  ],
+                ],
+              },
+            },
+          ],
+          Version: 2012-10-17,
+        },
+      },
+      Type: AWS::S3::BucketPolicy,
     },
     CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9: {
       Properties: {
@@ -885,14 +878,32 @@ exports[`LiveStreaming Stack Test 1`] = `
             },
             {
               Action: s3:GetObject,
+              Condition: {
+                StringEquals: {
+                  AWS:SourceArn: {
+                    Fn::Join: [
+                      ,
+                      [
+                        arn:,
+                        {
+                          Ref: AWS::Partition,
+                        },
+                        :cloudfront::,
+                        {
+                          Ref: AWS::AccountId,
+                        },
+                        :distribution/,
+                        {
+                          Ref: CloudFrontToS3CloudFrontDistribution241D9866,
+                        },
+                      ],
+                    ],
+                  },
+                },
+              },
               Effect: Allow,
               Principal: {
-                CanonicalUser: {
-                  Fn::GetAtt: [
-                    CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F,
-                    S3CanonicalUserId,
-                  ],
-                },
+                Service: cloudfront.amazonaws.com,
               },
               Resource: {
                 Fn::Join: [
@@ -906,6 +917,42 @@ exports[`LiveStreaming Stack Test 1`] = `
                     },
                     /*,
                   ],
+                ],
+              },
+            },
+            {
+              Action: s3:ListBucket,
+              Condition: {
+                StringEquals: {
+                  AWS:SourceArn: {
+                    Fn::Join: [
+                      ,
+                      [
+                        arn:,
+                        {
+                          Ref: AWS::Partition,
+                        },
+                        :cloudfront::,
+                        {
+                          Ref: AWS::AccountId,
+                        },
+                        :distribution/,
+                        {
+                          Ref: CloudFrontToS3CloudFrontDistribution241D9866,
+                        },
+                      ],
+                    ],
+                  },
+                },
+              },
+              Effect: Allow,
+              Principal: {
+                Service: cloudfront.amazonaws.com,
+              },
+              Resource: {
+                Fn::GetAtt: [
+                  CloudFrontToS3S3Bucket9CE6AB04,
+                  Arn,
                 ],
               },
             },
@@ -1097,7 +1144,7 @@ exports[`LiveStreaming Stack Test 1`] = `
             Arn,
           ],
         },
-        Runtime: nodejs18.x,
+        Runtime: nodejs22.x,
         Tags: [
           {
             Key: SolutionId,
@@ -1260,10 +1307,12 @@ exports[`LiveStreaming Stack Test 1`] = `
     MediaLiveChannel: {
       DeletionPolicy: Delete,
       DependsOn: [
-        CloudFrontToS3CloudFrontDistributionOrigin1S3OriginB0637B8F,
         CloudFrontToS3CloudFrontDistribution241D9866,
         CloudFrontToS3CloudfrontLoggingBucketPolicy416B82D9,
         CloudFrontToS3CloudfrontLoggingBucket8350BE9B,
+        CloudFrontToS3CloudfrontLoggingBucketAccessLogPolicy2AAA13DA,
+        CloudFrontToS3CloudfrontLoggingBucketAccessLog0E3BAD05,
+        CloudFrontToS3CloudFrontOacFB5D4E73,
         CloudFrontToS3S3BucketPolicy2495300D,
         CloudFrontToS3S3Bucket9CE6AB04,
         CloudFrontToS3S3LoggingBucketPolicy360F3875,

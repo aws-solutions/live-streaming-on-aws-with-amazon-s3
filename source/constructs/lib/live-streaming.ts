@@ -16,7 +16,6 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { NagSuppressions } from 'cdk-nag';
-import * as appreg from '@aws-cdk/aws-servicecatalogappregistry-alpha';
 import { Construct } from 'constructs';
 
 //Solution construct
@@ -373,7 +372,7 @@ export class LiveStreaming extends cdk.Stack {
           );
 
         const customResourceLambda = new lambda.Function(this, 'CustomResource', {
-            runtime: lambda.Runtime.NODEJS_18_X,
+            runtime: lambda.Runtime.NODEJS_22_X,
             handler: 'index.handler',
             description: 'CFN Custom resource to copy assets to S3 and get the MediaConvert endpoint',
             environment: {
@@ -470,31 +469,6 @@ export class LiveStreaming extends cdk.Stack {
 
 
         /**
-        * AppRegistry
-        */
-        const applicationName = `live-streaming-on-aws-with-amazon-s3-${cdk.Aws.REGION}-${cdk.Aws.ACCOUNT_ID}-${cdk.Aws.STACK_NAME}`;
-        const attributeGroup = new appreg.AttributeGroup(this, 'AppRegistryAttributeGroup', {
-            attributeGroupName: `${cdk.Aws.REGION}-${cdk.Aws.STACK_NAME}`,
-            description: 'Attribute group for solution information.',
-            attributes: {
-                ApplicationType: 'AWS-Solutions',
-                SolutionVersion: '%%VERSION%%',
-                SolutionID: solutionId
-            }
-        });
-        const appRegistry = new appreg.Application(this, 'AppRegistryApp', {
-            applicationName: applicationName,
-            description: `Service Catalog application to track and manage all your resources. The SolutionId is ${solutionId} and SolutionVersion is %%VERSION%%.`
-        });
-        appRegistry.associateApplicationWithStack(this);
-        cdk.Tags.of(appRegistry).add('Solutions:SolutionName', solutionName);
-        cdk.Tags.of(appRegistry).add('Solutions:SolutionVersion', '%%VERSION%%');
-        cdk.Tags.of(appRegistry).add('Solutions:ApplicationType', 'AWS-Solutions');
-        cdk.Tags.of(appRegistry).add('Solutions:SolutionID', solutionId);
-
-        attributeGroup.associateWith(appRegistry);
-
-        /**
          * Outputs
          */
         new cdk.CfnOutput(this, 'LiveStreamUrl', { // NOSONAR
@@ -522,17 +496,6 @@ export class LiveStreaming extends cdk.Stack {
             description: 'The MediaLive Input ingress endpoint for push input types',
             exportName: `${cdk.Aws.STACK_NAME}-MediaLiveEndpoint`
         });
-        new cdk.CfnOutput(this, 'AppRegistryConsole', { // NOSONAR
-            description: 'AppRegistry',
-            value: `https://${cdk.Aws.REGION}.console.aws.amazon.com/servicecatalog/home?#applications/${appRegistry.applicationId}`,
-            exportName: `${cdk.Aws.STACK_NAME}-AppRegistry`
-        });
-        new cdk.CfnOutput(this, 'MediaLiveChannelId', { // NOSONAR
-            description: 'MediaLive Channel Id',
-            value: `${mediaLiveChannel.getAttString('ChannelId')}`,
-            exportName: `${cdk.Aws.STACK_NAME}-MediaLiveChannelId`
-        });
-
 
         /**
         * Tag all resources with Solution Id
