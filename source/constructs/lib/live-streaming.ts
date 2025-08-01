@@ -148,25 +148,25 @@ export class LiveStreaming extends cdk.Stack {
          * Construct also includes a logs bucket for the CloudFront distribution and a CloudFront
          * OriginAccessIdentity which is used to restrict access to S3 from CloudFront.
          */
-        // Need Unique name for each Cache Policy. 
+        // Need Unique name for each Cache Policy.
         const cachePolicyName = `CachePolicy-${cdk.Aws.STACK_NAME}-${cdk.Aws.REGION}`;
 
         const cachePolicy = new CachePolicy(this, `CachePolicy`, {
             cachePolicyName: cachePolicyName,
             headerBehavior: {
-              behavior: 'whitelist',
-              headers: ['Origin']
+                behavior: 'whitelist',
+                headers: ['Origin']
             }
         });
 
         const distribution = new CloudFrontToS3(this, 'CloudFrontToS3', {
             cloudFrontDistributionProps: {
-              defaultBehavior: {
-                cachePolicy
-              },
-              errorResponses: [400, 403, 404, 405, 414, 416, 500, 501, 502, 503, 504].map((httpStatus: number) => {
-                return { httpStatus, ttl: cdk.Duration.seconds(1) };
-              })
+                defaultBehavior: {
+                    cachePolicy
+                },
+                errorResponses: [400, 403, 404, 405, 414, 416, 500, 501, 502, 503, 504].map((httpStatus: number) => {
+                    return { httpStatus, ttl: cdk.Duration.seconds(1) };
+                })
             },
             bucketProps: {
                 objectOwnership: s3.ObjectOwnership.OBJECT_WRITER
@@ -207,18 +207,18 @@ export class LiveStreaming extends cdk.Stack {
         NagSuppressions.addResourceSuppressions(
             distribution.cloudFrontWebDistribution,
             [
-              {
-                id: 'AwsSolutions-CFR1',
-                reason: 'Use case does not warrant CloudFront Geo restriction'
-              }, {
-                id: 'AwsSolutions-CFR2',
-                reason: 'Use case does not warrant CloudFront integration with AWS WAF'
-              }, {
-                id: 'AwsSolutions-CFR4',
-                reason: 'CloudFront automatically sets the security policy to TLSv1 when the distribution uses the CloudFront domain name'
-              }
+                {
+                    id: 'AwsSolutions-CFR1',
+                    reason: 'Use case does not warrant CloudFront Geo restriction'
+                }, {
+                    id: 'AwsSolutions-CFR2',
+                    reason: 'Use case does not warrant CloudFront integration with AWS WAF'
+                }, {
+                    id: 'AwsSolutions-CFR4',
+                    reason: 'CloudFront automatically sets the security policy to TLSv1 when the distribution uses the CloudFront domain name'
+                }
             ],
-          );
+        );
 
         /**
          * IAM Roles
@@ -232,7 +232,7 @@ export class LiveStreaming extends cdk.Stack {
         * https://docs.aws.amazon.com/medialive/latest/ug/thumbnails-enable.html#thumbnails-enable-iam
         */
         const thumbnailPolicyStatement = new iam.PolicyStatement({
-            actions: [ 's3:PutObject' ],
+            actions: ['s3:PutObject'],
             conditions: {
                 StringNotEquals: {
                     's3:ResourceAccount': `${cdk.Aws.ACCOUNT_ID}`
@@ -364,12 +364,12 @@ export class LiveStreaming extends cdk.Stack {
         NagSuppressions.addResourceSuppressions(
             customResourcePolicy,
             [
-              {
-                id: 'AwsSolutions-IAM5',
-                reason: 'Resource ARNs are not generated at the time of policy creation'
-              }
+                {
+                    id: 'AwsSolutions-IAM5',
+                    reason: 'Resource ARNs are not generated at the time of policy creation'
+                }
             ]
-          );
+        );
 
         const customResourceLambda = new lambda.Function(this, 'CustomResource', {
             runtime: lambda.Runtime.NODEJS_22_X,
@@ -392,10 +392,10 @@ export class LiveStreaming extends cdk.Stack {
                 rules_to_suppress: [{
                     id: 'W58',
                     reason: 'Invalid warning: function has access to cloudwatch'
-                },{
+                }, {
                     id: 'W89',
                     reason: 'This CustomResource does not need to be deployed inside a VPC'
-                },{
+                }, {
                     id: 'W92',
                     reason: 'This CustomResource does not need to define ReservedConcurrentExecutions to reserve simultaneous executions'
                 }]
@@ -495,6 +495,11 @@ export class LiveStreaming extends cdk.Stack {
             value: mediaLiveInput.getAttString('EndPoint'),
             description: 'The MediaLive Input ingress endpoint for push input types',
             exportName: `${cdk.Aws.STACK_NAME}-MediaLiveEndpoint`
+        });
+        new cdk.CfnOutput(this, 'MediaLiveChannelId', { // NOSONAR
+            description: 'MediaLive Channel Id',
+            value: `${mediaLiveChannel.getAttString('ChannelId')}`,
+            exportName: `${cdk.Aws.STACK_NAME}-MediaLiveChannelId`
         });
 
         /**

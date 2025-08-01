@@ -188,6 +188,28 @@ exports[`LiveStreaming Stack Test 1`] = `
         ],
       },
     },
+    MediaLiveChannelId: {
+      Description: MediaLive Channel Id,
+      Export: {
+        Name: {
+          Fn::Join: [
+            ,
+            [
+              {
+                Ref: AWS::StackName,
+              },
+              -MediaLiveChannelId,
+            ],
+          ],
+        },
+      },
+      Value: {
+        Fn::GetAtt: [
+          MediaLiveChannel,
+          ChannelId,
+        ],
+      },
+    },
     MediaLiveConsole: {
       Description: MediaLive Channel,
       Export: {
