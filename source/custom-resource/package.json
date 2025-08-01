@@ -1,12 +1,12 @@
 {
   "name": "live-streaming-single-pipeline",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "description": "cfn custom resources for vod workflow",
   "main": "na",
@@ -14,12 +14,12 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "axios": "^1.8.2",
+    "axios": "^1.10.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-medialive": "^3.622.0",
-    "@aws-sdk/client-ssm": "^3.622.0",
+    "@aws-sdk/client-medialive": "^3.844.0",
+    "@aws-sdk/client-ssm": "^3.844.0",
     "aws-sdk-client-mock": "^3.1.0",
     "axios-mock-adapter": "^2.1.0",
     "chai": "*",
